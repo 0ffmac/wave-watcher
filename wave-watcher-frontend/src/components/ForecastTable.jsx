@@ -21,7 +21,7 @@ const ForecastTable = ({ data }) => {
   
   // Group ALL hourly data by day
   const days = [];
-  data.times.forEach((timeStr, i) => {
+  (data?.times || []).forEach((timeStr, i) => {
     const date = parseISO(timeStr);
     const dayStr = format(date, 'yyyy-MM-dd');
     let dayEntry = days.find(d => d.dateStr === dayStr);

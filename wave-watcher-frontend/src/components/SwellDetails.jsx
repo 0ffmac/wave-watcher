@@ -25,14 +25,19 @@ const SwellDetails = ({ swells, wind, temperatures, tide, rating, surfRange }) =
 
   const ratingInfo = getRatingSegments(rating);
 
-  // Helper for Surf Description (Simulated)
+  // Helper for Surf Description
   const getSurfDesc = (range) => {
-    const height = parseFloat(range.split('–')[0]);
-    if (height < 0.5) return "Flat";
-    if (height < 0.8) return "Knee to thigh";
-    if (height < 1.2) return "Thigh to waist";
-    if (height < 1.8) return "Waist to head";
-    return "Overhead";
+    // Extract the max height from the range (e.g., "0.9–1.4m" -> 1.4)
+    const parts = range.split('–');
+    const height = parseFloat(parts[parts.length - 1]); 
+
+    if (height < 0.3) return "Flat";
+    if (height < 0.7) return "Knee to thigh";
+    if (height < 1.1) return "Waist to chest";
+    if (height < 1.5) return "Chest to shoulder";
+    if (height < 1.9) return "Head high";
+    if (height < 2.5) return "Overhead";
+    return "Well overhead";
   };
 
   return (
