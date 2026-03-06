@@ -8,7 +8,10 @@ import Navbar from "./components/Navbar";
 import { Loader2 } from "lucide-react";
 
 import { useSurfData } from "./hooks/useSurfData";
-import { transformForecastData } from "./utils/dataTransformers";
+import {
+  transformForecastData,
+  getDefaultSpotByRegion,
+} from "./utils/dataTransformers";
 import { getAllSpotsFlat } from "./data/spotConfig";
 
 // Configuration
@@ -21,21 +24,35 @@ function App() {
   const [activeSpotId, setActiveSpotId] = useState(DEFAULT_SPOT);
   const [activeCountryKey, setActiveCountryKey] = useState(DEFAULT_COUNTRY);
   const [activeRegionKey, setActiveRegionKey] = useState(DEFAULT_REGION);
+  const [hasInitializedLocation, setHasInitializedLocation] = useState(false);
 
-  // 1. Data Fetching Hook
-  const { data, loading, error } = useSurfData(activeSpotId);
+  // 1. Data Fetching & Location Hook
+  const { data, loading, error, detectedLocation } = useSurfData(activeSpotId);
 
-  // 2. Optimized Data Transformation (only runs when data/activeSpotId changes)
+  // 2. Dynamic Defaulting based on Geolocation (runs once when location is detected)
+  useEffect(() => {
+    if (detectedLocation && !hasInitializedLocation) {
+      const suggested = getDefaultSpotByRegion(detectedLocation);
+      if (suggested) {
+        setActiveSpotId(suggested.spotId);
+        setActiveCountryKey(suggested.country);
+        setActiveRegionKey(suggested.region);
+      }
+      setHasInitializedLocation(true);
+    }
+  }, [detectedLocation, hasInitializedLocation]);
+
+  // 3. Optimized Data Transformation
   const transformedData = useMemo(() => {
     return transformForecastData(data, activeSpotId);
   }, [data, activeSpotId]);
 
-  if (loading) {
+  if (loading && !data) {
     return (
       <div className="h-screen w-screen flex flex-col items-center justify-center bg-slate-50 gap-4">
         <Loader2 className="animate-spin text-blue-500" size={48} />
         <p className="font-black text-xs uppercase tracking-[0.3em] text-slate-400">
-          Loading Forecast
+          {detectedLocation ? "Loading Forecast" : "Detecting Location"}
         </p>
       </div>
     );
