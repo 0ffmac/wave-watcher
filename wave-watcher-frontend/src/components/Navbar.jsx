@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import LocationSelector from "./LocationSelector";
 
 const Navbar = ({
@@ -22,7 +23,7 @@ const Navbar = ({
         <div className="flex items-center gap-2 md:gap-4 min-w-0">
           <div className="flex items-center gap-2 shrink-0">
             {/* WaveWatcher Custom Logo */}
-            <div className="relative group cursor-pointer">
+            <Link to="/" className="relative group cursor-pointer">
               <div className="w-9 h-9 md:w-11 md:h-11 bg-slate-900 rounded-xl flex items-center justify-center border border-white/20 shadow-2xl overflow-hidden transition-all duration-500 group-hover:border-blue-400/50">
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-transparent to-cyan-400/20 opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="relative z-10 flex flex-col items-center">
@@ -38,11 +39,11 @@ const Navbar = ({
                   </svg>
                 </div>
               </div>
-            </div>
+            </Link>
             {/* Brand Name: Added drop-shadow for visibility on white foam */}
-            <span className="font-black text-white text-base md:text-lg tracking-tighter hidden sm:block drop-shadow-md">
+            <Link to="/" className="font-black text-white text-base md:text-lg tracking-tighter hidden sm:block drop-shadow-md">
               WaveWatcher
-            </span>
+            </Link>
           </div>
 
           {/* Location Selector: We pass a 'compact' prop if you want to shrink it on mobile */}
@@ -63,24 +64,24 @@ const Navbar = ({
         {/* CENTER: Desktop Links */}
         {/* High-visibility slate colors with hard-edge drop shadows */}
         <div className="hidden lg:flex items-center gap-8 font-black text-[10px] uppercase tracking-widest">
-          <a
-            href="#"
+          <Link
+            to="/"
             className="text-white hover:text-blue-400 transition-colors drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]"
           >
             Reports
-          </a>
+          </Link>
           <a
             href="#"
             className="text-slate-200 hover:text-white transition-colors drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]"
           >
             Forecasts
           </a>
-          <a
-            href="#"
+          <Link
+            to="/map"
             className="text-slate-200 hover:text-white transition-colors drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]"
           >
             Maps
-          </a>
+          </Link>
         </div>
 
         {/* RIGHT: CTA Button */}
@@ -95,24 +96,24 @@ const Navbar = ({
       {/* MOBILE NAVIGATION BAR (Bottom Fixed) */}
       {/* This solves the visibility/positioning issue for mobile devices by putting keys links at the thumb level */}
       <div className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-8 px-8 py-3 bg-slate-900/80 backdrop-blur-xl border border-white/10 rounded-full z-50 shadow-2xl">
-        <a
-          href="#"
+        <Link
+          to="/"
           className="text-white text-[9px] font-black uppercase tracking-tighter"
         >
           Reports
-        </a>
+        </Link>
         <a
           href="#"
           className="text-slate-400 text-[9px] font-black uppercase tracking-tighter"
         >
           Forecasts
         </a>
-        <a
-          href="#"
+        <Link
+          to="/map"
           className="text-slate-400 text-[9px] font-black uppercase tracking-tighter"
         >
           Maps
-        </a>
+        </Link>
       </div>
     </>
   );

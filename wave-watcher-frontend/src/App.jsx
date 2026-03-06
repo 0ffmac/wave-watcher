@@ -1,9 +1,5 @@
-import React, { useState, useMemo } from "react";
-import HeroSection from "./components/HeroSection";
-import SwellDetails from "./components/SwellDetails";
-import ForecastChart from "./components/ForecastChart";
-import ForecastTable from "./components/ForecastTable";
-import SpotMap from "./components/SpotMap";
+import React, { useState, useMemo, useEffect } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import { Loader2 } from "lucide-react";
 
@@ -13,6 +9,10 @@ import {
   getDefaultSpotByRegion,
 } from "./utils/dataTransformers";
 import { getAllSpotsFlat } from "./data/spotConfig";
+
+// Pages
+import Dashboard from "./pages/Dashboard";
+import MapPage from "./pages/MapPage";
 
 // Configuration
 const SPOTS = getAllSpotsFlat();
@@ -59,106 +59,59 @@ function App() {
     );
   }
 
-  // Handle error state gracefully if needed (optional)
-  if (error && !data) {
-     // You could show an error message here, but original code just showed N/A
-  }
-
-  const {
-    spotName,
-    location,
-    lat,
-    lon,
-    surfRange,
-    rating,
-    mapSwells,
-    wind,
-    temperatures,
-    tide,
-    hourly,
-  } = transformedData;
-
   return (
-    <div className="min-h-screen pb-24">
-      <Navbar
-        activeSpotId={activeSpotId}
-        activeCountryKey={activeCountryKey}
-        activeRegionKey={activeRegionKey}
-        onSpotSelect={setActiveSpotId}
-        onCountrySelect={setActiveCountryKey}
-        onRegionSelect={setActiveRegionKey}
-      />
+    <BrowserRouter>
+      <div className="min-h-screen">
+        <Navbar
+          activeSpotId={activeSpotId}
+          activeCountryKey={activeCountryKey}
+          activeRegionKey={activeRegionKey}
+          onSpotSelect={setActiveSpotId}
+          onCountrySelect={setActiveCountryKey}
+          onRegionSelect={setActiveRegionKey}
+        />
 
-      <HeroSection
-        spotName={spotName}
-        rating={rating}
-        surfRange={surfRange}
-        location={location}
-      />
-
-      <SwellDetails
-        swells={mapSwells}
-        wind={wind}
-        temperatures={temperatures}
-        tide={tide}
-        tideForecast={data?.hourly?.sea_level_height_msl}
-        times={data?.hourly?.times}
-        rating={rating}
-        surfRange={surfRange}
-        activeSpotId={activeSpotId}
-        activeCountryKey={activeCountryKey}
-        activeRegionKey={activeRegionKey}
-        onSpotSelect={setActiveSpotId}
-      />
-
-      <div className="grid grid-cols-1 xl:grid-cols-4 container mx-auto gap-8 px-6">
-        <div className="xl:col-span-3">
-          <ForecastTable
-            data={hourly}
-            spotId={activeSpotId}
-            spotsMetadata={SPOTS}
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <Dashboard
+                data={data}
+                transformedData={transformedData}
+                activeSpotId={activeSpotId}
+                activeCountryKey={activeCountryKey}
+                activeRegionKey={activeRegionKey}
+                setActiveSpotId={setActiveSpotId}
+                SPOTS={SPOTS}
+              />
+            }
           />
-        </div>
-        <div className="xl:col-span-1">
-          <div className="sticky top-8 space-y-8">
-            <SpotMap
-              lat={lat}
-              lon={lon}
-              spotName={spotName}
-              wind={wind}
-              swells={mapSwells}
-            />
-            <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-700" />
-              <h4 className="font-black text-2xl mb-2 relative z-10">
-                Go Premium
-              </h4>
-              <p className="text-white/80 text-sm mb-6 relative z-10">
-                Get 17-day forecasts, ad-free experience, and high-def live
-                cams.
-              </p>
-              <button className="bg-white text-blue-600 px-6 py-3 rounded-full font-black text-xs uppercase tracking-widest relative z-10 hover:shadow-xl transition-shadow">
-                Learn More
-              </button>
-            </div>
+          <Route
+            path="/map"
+            element={
+              <MapPage
+                data={data}
+                loading={loading}
+                error={error}
+                activeSpotId={activeSpotId}
+                activeCountryKey={activeCountryKey}
+                activeRegionKey={activeRegionKey}
+                onSpotSelect={setActiveSpotId}
+                transformedData={transformedData}
+              />
+            }
+          />
+        </Routes>
+
+        <footer className="mt-24 border-t border-slate-200 bg-white/50 py-12">
+          <div className="container mx-auto px-6 text-center">
+            <p className="text-slate-400 font-bold text-xs uppercase tracking-[0.2em]">
+              © 2026 WaveWatcher Forecast Services.
+            </p>
           </div>
-        </div>
+        </footer>
       </div>
-
-      <ForecastChart
-        data={hourly}
-        spotId={activeSpotId}
-        spotsMetadata={SPOTS}
-      />
-
-      <footer className="mt-24 border-t border-slate-200 bg-white/50 py-12">
-        <div className="container mx-auto px-6 text-center">
-          <p className="text-slate-400 font-bold text-xs uppercase tracking-[0.2em]">
-            © 2026 WaveWatcher Forecast Services.
-          </p>
-        </div>
-      </footer>
-    </div>
+    </BrowserRouter>
   );
 }
 
