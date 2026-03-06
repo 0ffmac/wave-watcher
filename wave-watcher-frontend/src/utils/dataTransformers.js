@@ -6,6 +6,37 @@ import { getSpotById, getSpotLocation, getAllSpotsFlat } from "../data/spotConfi
 
 const SPOTS = getAllSpotsFlat();
 
+export const getDefaultSpotByRegion = (detectedLocation) => {
+  if (!detectedLocation) return null;
+
+  const { continent, country } = detectedLocation;
+
+  // 1. Europe (France - La Graviere)
+  if (continent === "EU" || country === "FR") {
+    return {
+      spotId: "fr_la_graviere",
+      country: "france",
+      region: "hossegor",
+    };
+  }
+
+  // 2. North America (USA - Sebastian Inlet)
+  if (continent === "NA" || country === "US") {
+    return {
+      spotId: "us_sebastian_inlet",
+      country: "usa",
+      region: "florida_central",
+    };
+  }
+
+  // 3. Asia / Default (Indonesia - Ujung Bocur)
+  return {
+    spotId: "ujung_bocur",
+    country: "indonesia",
+    region: "sumatra",
+  };
+};
+
 export const transformForecastData = (data, activeSpotId) => {
   // Provide default values for graceful degradation
   const spotData = getSpotById(activeSpotId) || SPOTS[activeSpotId] || {};
