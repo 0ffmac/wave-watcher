@@ -1,6 +1,7 @@
 import React from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 import { format, parseISO } from 'date-fns';
+import { calculateSurfHeight } from '../utils/surfCalculations';
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
@@ -17,14 +18,40 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
-const ForecastChart = ({ data }) => {
-  // data is { times, wave_height, wind_speed }
-  const chartData = (data?.times || []).slice(0, 48).map((time, i) => ({
-    time: format(parseISO(time), 'ha'),
-    day: format(parseISO(time), 'EEE'),
-    wave: data?.wave_height?.[i] ?? 0,
-    wind: data?.wind_speed?.[i] ?? 0,
-  }));
+const ForecastChart = ({ data, spotId, spotsMetadata }) => {
+  const spotMeta = spotsMetadata?.[spotId];
+
+  // data is { times, wave_height, wind_speed, swell_height, swell_period ... }
+  const chartData = (data?.times || []).slice(0, 48).map((time, i) => {
+    const windDir = data.wind_direction?.[i] ?? 0;
+    const windSpeed = data.wind_speed?.[i] ?? 0;
+
+    const pSurf = calculateSurfHeight(
+      data.swell_height?.[i] ?? 0,
+      data.swell_period?.[i] ?? 12,
+      data.swell_direction?.[i] ?? 210,
+      windDir,
+      windSpeed,
+      spotMeta
+    );
+    const sSurf = calculateSurfHeight(
+      data.secondary_swell_height?.[i] ?? 0,
+      data.secondary_swell_period?.[i] ?? 8,
+      data.secondary_swell_direction?.[i] ?? 240,
+      windDir,
+      windSpeed,
+      spotMeta
+    );
+
+    const surfHeight = Math.max(pSurf.max, sSurf.max);
+
+    return {
+      time: format(parseISO(time), 'ha'),
+      day: format(parseISO(time), 'EEE'),
+      wave: surfHeight,
+      wind: data?.wind_speed?.[i] ?? 0,
+    };
+  });
 
   return (
     <div className="container mx-auto px-6 py-8">

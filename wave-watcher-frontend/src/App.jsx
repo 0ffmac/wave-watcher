@@ -4,58 +4,34 @@ import SwellDetails from "./components/SwellDetails";
 import ForecastChart from "./components/ForecastChart";
 import ForecastTable from "./components/ForecastTable";
 import SpotMap from "./components/SpotMap";
-import { Loader2, ChevronDown, MapPin } from "lucide-react";
+import LocationSelector from "./components/LocationSelector";
+import { Loader2 } from "lucide-react";
+import {
+  calculateSurfHeight,
+  calculateConditionRating,
+} from "./utils/surfCalculations";
+import {
+  getAllSpotsFlat,
+  getSpotById,
+  getSpotLocation,
+  getCountries,
+} from "./data/spotConfig";
 
 // Configuration
 const BASE_URL = "https://surf-forecast-api.comblog.workers.dev/api/forecast";
 
-const SPOTS = {
-  ujung_bocur: {
-    name: "Ujung Bocur",
-    lat: -5.3048,
-    lon: 103.9919,
-    location: "South Sumatra, Indonesia",
-  },
-  mandiri_beach: {
-    name: "Mandiri Beach",
-    lat: -5.2472,
-    lon: 103.9234,
-    location: "South Sumatra, Indonesia",
-  },
-  krui_left: {
-    name: "Krui Left",
-    lat: -5.1928,
-    lon: 103.929,
-    location: "South Sumatra, Indonesia",
-  },
-  jennys_right: {
-    name: "Jenny's Right",
-    lat: -5.0383,
-    lon: 103.7666,
-    location: "South Sumatra, Indonesia",
-  },
-  krui_right: {
-    name: "Krui Right",
-    lat: -5.178,
-    lon: 103.888,
-    location: "South Sumatra, Indonesia",
-  },
-  way_jambu: {
-    name: "Way Jambu",
-    lat: -5.3491,
-    lon: 104.0302,
-    location: "South Sumatra, Indonesia",
-  },
-  ujung_walur: {
-    name: "Ujung Walur",
-    lat: -5.216,
-    lon: 103.908,
-    location: "South Sumatra, Indonesia",
-  },
-};
+// Get all spots as flat object for backward compatibility
+const SPOTS = getAllSpotsFlat();
+
+// Default selection
+const DEFAULT_COUNTRY = "indonesia";
+const DEFAULT_REGION = "sumatra";
+const DEFAULT_SPOT = "ujung_bocur";
 
 function App() {
-  const [activeSpotId, setActiveSpotId] = useState("ujung_bocur");
+  const [activeSpotId, setActiveSpotId] = useState(DEFAULT_SPOT);
+  const [activeCountryKey, setActiveCountryKey] = useState(DEFAULT_COUNTRY);
+  const [activeRegionKey, setActiveRegionKey] = useState(DEFAULT_REGION);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -95,9 +71,37 @@ function App() {
   }
 
   // Provide default values for graceful degradation
-  const spotName = data?.meta?.spot_name || SPOTS[activeSpotId].name;
-  const rating = data?.current?.rating || "N/A";
-  const surfRange = data?.current?.surf_range || "N/A";
+  const spotName =
+    data?.meta?.spot_name ||
+    getSpotById(activeSpotId)?.name ||
+    SPOTS[activeSpotId]?.name ||
+    activeSpotId;
+  const spotData = getSpotById(activeSpotId) || SPOTS[activeSpotId] || {};
+
+  // Dynamic Surf Range Calculation for the Hero/Details card
+  const currentSwell = data?.current?.swells?.[0] || {
+    height: 0,
+    period: 0,
+    direction: 0,
+  };
+  const currentWind = data?.current?.wind || { speed: 0, direction: 0 };
+  const calculatedSurf = calculateSurfHeight(
+    currentSwell.height,
+    currentSwell.period,
+    currentSwell.direction,
+    currentWind.direction,
+    currentWind.speed,
+    spotData,
+  );
+
+  const surfRange = `${calculatedSurf.min.toFixed(1)}–${calculatedSurf.max.toFixed(1)}m`;
+  const rating = calculateConditionRating(
+    calculatedSurf.max,
+    currentWind.speed,
+    calculatedSurf.windFactor,
+    calculatedSurf.directionalFactor,
+  );
+
   const swells = data?.current?.swells || [];
 
   // This ensures we check for both even if the primary 'swells' array only has 1 item
@@ -153,78 +157,114 @@ function App() {
     secondary_swell_direction: data?.hourly?.secondary_swell_direction || [],
     temperature: data?.hourly?.temperature || [],
   };
-  const location = SPOTS[activeSpotId].location;
-  const lat = SPOTS[activeSpotId].lat;
-  const lon = SPOTS[activeSpotId].lon;
+  const location =
+    getSpotLocation(activeSpotId) || spotData.location || "Unknown Location";
+  const lat = spotData.lat || 0;
+  const lon = spotData.lon || 0;
 
   return (
     <div className="min-h-screen pb-24">
       {/* Dynamic Header with Spot Selector */}
-      <nav className="absolute top-0 left-0 right-0 z-50 px-4 py-4 md:px-6 md:py-6 container mx-auto flex items-center justify-between">
-        <div className="flex items-center gap-2 md:gap-6">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 md:w-10 md:h-10 bg-white/20 backdrop-blur-lg rounded-xl flex items-center justify-center border border-white/30 shadow-xl">
-              <div className="w-4 h-4 md:w-5 md:h-5 bg-white rounded-sm rotate-45" />
+      {/* Added a subtle top-down gradient overlay to ensure text visibility regardless of wave brightness */}
+      <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-black/40 to-transparent z-40 pointer-events-none" />
+
+      <nav className="absolute top-0 left-0 right-0 z-50 px-3 py-3 md:px-6 md:py-6 container mx-auto flex items-center justify-between gap-2">
+        {/* LEFT: Logo & Location */}
+        <div className="flex items-center gap-2 md:gap-4 min-w-0">
+          <div className="flex items-center gap-2 shrink-0">
+            {/* WaveWatcher Custom Logo */}
+            <div className="relative group cursor-pointer">
+              <div className="w-9 h-9 md:w-11 md:h-11 bg-slate-900 rounded-xl flex items-center justify-center border border-white/20 shadow-2xl overflow-hidden transition-all duration-500 group-hover:border-blue-400/50">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-transparent to-cyan-400/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="relative z-10 flex flex-col items-center">
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="w-5 h-5 text-blue-500 group-hover:text-white transition-all fill-none stroke-current"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" />
+                    <path d="M2 17c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" />
+                  </svg>
+                </div>
+              </div>
             </div>
-            <span className="font-black text-white text-lg md:text-xl tracking-tighter hidden xs:block">
+            {/* Brand Name: Added drop-shadow for visibility on white foam */}
+            <span className="font-black text-white text-base md:text-lg tracking-tighter hidden sm:block drop-shadow-md">
               WaveWatcher
             </span>
           </div>
 
-          {/* Spot Dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="flex items-center gap-1.5 md:gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-3 py-1.5 md:px-4 md:py-2 rounded-xl text-white font-bold text-xs md:text-sm hover:bg-white/20 transition-all cursor-pointer whitespace-nowrap"
-            >
-              <MapPin size={14} className="md:w-4 md:h-4" />
-              <span className="max-w-[100px] xs:max-w-none truncate">
-                {SPOTS[activeSpotId].name}
-              </span>
-              <ChevronDown
-                size={12}
-                className={`transition-transform duration-300 ${isDropdownOpen ? "rotate-180" : ""} opacity-50 md:w-3.5 md:h-3.5`}
-              />
-            </button>
-
-            {isDropdownOpen && (
-              <>
-                <div
-                  className="fixed inset-0 z-40 bg-slate-900/20 backdrop-blur-sm"
-                  onClick={() => setIsDropdownOpen(false)}
-                />
-                <div className="absolute top-full left-0 mt-2 w-56 bg-white/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/50 transition-all py-2 z-50 opacity-100 visible translate-y-0">
-                  {Object.entries(SPOTS).map(([id, spot]) => (
-                    <button
-                      key={id}
-                      onClick={() => {
-                        setActiveSpotId(id);
-                        setIsDropdownOpen(false);
-                      }}
-                      className={`w-full text-left px-4 py-3 text-sm font-bold transition-colors hover:bg-blue-50 ${activeSpotId === id ? "text-blue-600 bg-blue-50/50" : "text-slate-700"}`}
-                    >
-                      {spot.name}
-                    </button>
-                  ))}
-                </div>
-              </>
-            )}
+          {/* Location Selector: We pass a 'compact' prop if you want to shrink it on mobile */}
+          <div className="min-w-0 max-w-[140px] xs:max-w-none">
+            <LocationSelector
+              activeSpotId={activeSpotId}
+              activeCountryKey={activeCountryKey}
+              activeRegionKey={activeRegionKey}
+              onSpotSelect={setActiveSpotId}
+              onCountrySelect={setActiveCountryKey}
+              onRegionSelect={setActiveRegionKey}
+              isDropdownOpen={isDropdownOpen}
+              setIsDropdownOpen={setIsDropdownOpen}
+            />
           </div>
         </div>
 
-        <div className="hidden lg:flex items-center gap-8 font-black text-[10px] uppercase tracking-widest text-white/70">
-          <a href="#" className="text-white">
+        {/* CENTER: Desktop Links */}
+        {/* High-visibility slate colors with hard-edge drop shadows */}
+        <div className="hidden lg:flex items-center gap-8 font-black text-[10px] uppercase tracking-widest">
+          <a
+            href="#"
+            className="text-white hover:text-blue-400 transition-colors drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]"
+          >
             Reports
           </a>
-          <a href="#">Forecasts</a>
-          <a href="#">Maps</a>
+          <a
+            href="#"
+            className="text-slate-200 hover:text-white transition-colors drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]"
+          >
+            Forecasts
+          </a>
+          <a
+            href="#"
+            className="text-slate-200 hover:text-white transition-colors drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]"
+          >
+            Maps
+          </a>
         </div>
 
-        <button className="bg-blue-500 text-white px-4 py-1.5 md:px-6 md:py-2 rounded-full font-black text-[10px] md:text-xs uppercase tracking-widest shadow-xl hover:scale-105 transition-all whitespace-nowrap">
-          <span className="hidden sm:inline">Join Premium</span>
-          <span className="sm:hidden">Premium</span>
-        </button>
+        {/* RIGHT: CTA Button */}
+        <div className="shrink-0">
+          <button className="bg-blue-600 text-white px-3 py-1.5 md:px-6 md:py-2 rounded-full font-black text-[10px] md:text-xs uppercase tracking-widest shadow-lg shadow-blue-900/40 hover:bg-blue-700 hover:scale-105 transition-all whitespace-nowrap active:scale-95">
+            <span className="hidden xs:inline">Join Premium</span>
+            <span className="xs:hidden">Premium</span>
+          </button>
+        </div>
       </nav>
+
+      {/* MOBILE NAVIGATION BAR (Bottom Fixed) */}
+      {/* This solves the visibility/positioning issue for mobile devices by putting keys links at the thumb level */}
+      <div className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-8 px-8 py-3 bg-slate-900/80 backdrop-blur-xl border border-white/10 rounded-full z-50 shadow-2xl">
+        <a
+          href="#"
+          className="text-white text-[9px] font-black uppercase tracking-tighter"
+        >
+          Reports
+        </a>
+        <a
+          href="#"
+          className="text-slate-400 text-[9px] font-black uppercase tracking-tighter"
+        >
+          Forecasts
+        </a>
+        <a
+          href="#"
+          className="text-slate-400 text-[9px] font-black uppercase tracking-tighter"
+        >
+          Maps
+        </a>
+      </div>
 
       <HeroSection
         spotName={spotName}
@@ -234,19 +274,27 @@ function App() {
       />
 
       <SwellDetails
-        swells={swells}
+        swells={mapSwells}
         wind={wind}
         temperatures={temperatures}
         tide={tide}
+        tideForecast={data?.hourly?.sea_level_height_msl}
+        times={data?.hourly?.times}
         rating={rating}
         surfRange={surfRange}
+        activeSpotId={activeSpotId}
+        activeCountryKey={activeCountryKey}
+        activeRegionKey={activeRegionKey}
+        onSpotSelect={setActiveSpotId}
       />
-
-      <ForecastChart data={hourly} />
 
       <div className="grid grid-cols-1 xl:grid-cols-4 container mx-auto gap-8 px-6">
         <div className="xl:col-span-3">
-          <ForecastTable data={hourly} />
+          <ForecastTable
+            data={hourly}
+            spotId={activeSpotId}
+            spotsMetadata={SPOTS}
+          />
         </div>
         <div className="xl:col-span-1">
           <div className="sticky top-8 space-y-8">
@@ -273,6 +321,12 @@ function App() {
           </div>
         </div>
       </div>
+
+      <ForecastChart
+        data={hourly}
+        spotId={activeSpotId}
+        spotsMetadata={SPOTS}
+      />
 
       <footer className="mt-24 border-t border-slate-200 bg-white/50 py-12">
         <div className="container mx-auto px-6 text-center">
