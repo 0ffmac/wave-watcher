@@ -45,10 +45,6 @@ const HeroSection = ({ spotName, rating, surfRange, location }) => {
           <button className="bg-white text-slate-900 px-6 py-2 rounded-full font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all shadow-xl">
             Live Cam
           </button>
-          {/* Reverted back to your preferred transparent/glass style */}
-          <button className="bg-white/10 backdrop-blur-md text-white border border-white/20 px-6 py-2 rounded-full font-black text-[10px] uppercase tracking-widest hover:bg-white/20 transition-all">
-            Full Forecast
-          </button>
         </div>
       </div>
     </section>
