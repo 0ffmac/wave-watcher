@@ -34,6 +34,7 @@ function App() {
     if (detectedLocation && !hasInitializedLocation) {
       const suggested = getDefaultSpotByRegion(detectedLocation);
       if (suggested) {
+        console.log("Setting default location for user region:", suggested);
         setActiveSpotId(suggested.spotId);
         setActiveCountryKey(suggested.country);
         setActiveRegionKey(suggested.region);
