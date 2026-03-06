@@ -19,6 +19,12 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 const ForecastChart = ({ data, spotId, spotsMetadata }) => {
+  const [hasMounted, setHasMounted] = React.useState(false);
+  
+  React.useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
   const spotMeta = spotsMetadata?.[spotId];
 
   // data is { times, wave_height, wind_speed, swell_height, swell_period ... }
@@ -71,8 +77,9 @@ const ForecastChart = ({ data, spotId, spotsMetadata }) => {
         </div>
 
         <div style={{ width: '100%', height: 300, minHeight: 300, minWidth: 0 }}>
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+          {hasMounted && (
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <defs>
                 <linearGradient id="colorWave" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
@@ -111,6 +118,7 @@ const ForecastChart = ({ data, spotId, spotsMetadata }) => {
               />
             </AreaChart>
           </ResponsiveContainer>
+          )}
         </div>
       </div>
     </div>
