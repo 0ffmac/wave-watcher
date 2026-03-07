@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import LocationSelector from "./LocationSelector";
 
 const Navbar = ({
@@ -11,6 +11,8 @@ const Navbar = ({
   onRegionSelect,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const location = useLocation();
+  const isMapPage = location.pathname === "/map";
 
   return (
     <>
@@ -94,11 +96,13 @@ const Navbar = ({
       </nav>
 
       {/* MOBILE CTA - Only show on very small screens since we hid it above */}
-      <div className="sm:hidden fixed top-[70px] right-3 z-50">
-        <button className="bg-blue-600 text-white px-3 py-1.5 rounded-full font-black text-[9px] uppercase tracking-widest shadow-lg shadow-blue-900/40 active:scale-95">
-          Premium
-        </button>
-      </div>
+      {!isMapPage && (
+        <div className="sm:hidden fixed top-[70px] right-3 z-50">
+          <button className="bg-blue-600 text-white px-3 py-1.5 rounded-full font-black text-[9px] uppercase tracking-widest shadow-lg shadow-blue-900/40 active:scale-95">
+            Premium
+          </button>
+        </div>
+      )}
     </>
   );
 };
