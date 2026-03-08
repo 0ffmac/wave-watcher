@@ -79,17 +79,24 @@ export const transformForecastData = (data, activeSpotId) => {
 
   const swells = data?.current?.swells || [];
   const mapSwells = [
-    swells?.[0] || {
-      height: data?.hourly?.swell_height?.[0] || 0,
-      period: data?.hourly?.swell_period?.[0] || 0,
-      direction: data?.hourly?.swell_direction?.[0] || 0,
+    {
+      height: parseFloat(
+        ((swells?.[0]?.height ?? data?.hourly?.swell_height?.[0] ?? 0) * inputScaleFactor).toFixed(2)
+      ),
+      period: swells?.[0]?.period ?? data?.hourly?.swell_period?.[0] ?? 0,
+      direction: swells?.[0]?.direction ?? data?.hourly?.swell_direction?.[0] ?? 0,
     },
-    swells?.[1] || {
-      height: data?.hourly?.secondary_swell_height?.[0] || 0,
-      period: data?.hourly?.secondary_swell_period?.[0] || 0,
-      direction: data?.hourly?.secondary_swell_direction?.[0] || 0,
+    {
+      height: parseFloat(
+        ((swells?.[1]?.height ?? data?.hourly?.secondary_swell_height?.[0] ?? 0) * inputScaleFactor).toFixed(2)
+      ),
+      period: swells?.[1]?.period ?? data?.hourly?.secondary_swell_period?.[0] ?? 0,
+      direction: swells?.[1]?.direction ?? data?.hourly?.secondary_swell_direction?.[0] ?? 0,
     },
   ];
+
+  const now = new Date();
+  const currentIdx = data?.hourly?.times?.findIndex(t => new Date(t) >= now) ?? 0;
 
   const wind = data?.current?.wind || {
     speed: 0,
@@ -141,5 +148,6 @@ export const transformForecastData = (data, activeSpotId) => {
     hourly,
     inputScaleFactor,
     energyMultiplier,
+    currentIdx,
   };
 };

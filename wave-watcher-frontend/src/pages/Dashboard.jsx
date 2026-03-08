@@ -28,6 +28,7 @@ const Dashboard = ({
     hourly,
     inputScaleFactor,
     energyMultiplier,
+    currentIdx,
   } = transformedData;
 
   return (
@@ -42,6 +43,8 @@ const Dashboard = ({
       <SwellDetails
         swells={mapSwells}
         wind={wind}
+        hourly={hourly}
+        currentIdx={currentIdx}
         temperatures={temperatures}
         tide={tide}
         tideForecast={data?.hourly?.sea_level_height_msl}
@@ -94,6 +97,7 @@ const Dashboard = ({
         data={hourly}
         spotId={activeSpotId}
         spotsMetadata={SPOTS}
+        inputScaleFactor={inputScaleFactor ?? 1.0}
       />
     </div>
   );

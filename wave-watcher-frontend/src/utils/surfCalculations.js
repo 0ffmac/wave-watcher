@@ -44,9 +44,10 @@ export const calculateSurfHeight = (
     spotMeta.facingDir === undefined
   ) {
     const defaultAmp = 1.5;
+    const chopDamping = (swellPeriod < MIN_SURF_PERIOD) ? 0.5 : 1.0;
     return {
-      min: Math.max(0.1, scaledHeight * breakingBaseMin * defaultAmp),
-      max: Math.max(0.2, scaledHeight * breakingBaseMax * defaultAmp),
+      min: Math.max(0.1, scaledHeight * breakingBaseMin * defaultAmp * chopDamping),
+      max: Math.max(0.2, scaledHeight * breakingBaseMax * defaultAmp * chopDamping),
       windFactor: 1.0,
       directionalFactor: 1.0,
     };
@@ -125,14 +126,20 @@ export const calculateSurfHeight = (
   // Wind penalizes height only when strong onshore
   const heightWindPenalty = (windFactor < 0.9 && windSpeed > 20) ? 0.85 : 1.0;
 
+  // Wind-chop damping: if the period is below the minimum groundswell threshold,
+  // treat this swell as local chop and cap its effective contribution at 50%.
+  // This prevents "Heavy" ratings from short-period wind slop.
+  // MIN_SURF_PERIOD is imported from spotConstants.
+  const chopDamping = (swellPeriod < MIN_SURF_PERIOD) ? 0.5 : 1.0;
+
   return {
     min: Math.max(
       0.1,
-      scaledHeight * breakingBaseMin * directionalFactor * amp * heightWindPenalty,
+      scaledHeight * breakingBaseMin * directionalFactor * amp * heightWindPenalty * chopDamping,
     ),
     max: Math.max(
       0.2,
-      scaledHeight * breakingBaseMax * directionalFactor * amp * heightWindPenalty,
+      scaledHeight * breakingBaseMax * directionalFactor * amp * heightWindPenalty * chopDamping,
     ),
     windFactor,
     directionalFactor,

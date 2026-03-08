@@ -109,8 +109,10 @@ const ForecastTable = ({ data, spotId, spotsMetadata, inputScaleFactor = 1.0, en
         )
       : { min: 0, max: 0, windFactor: 1.0, directionalFactor: 1.0 };
 
-    const surfMin = Math.sqrt(pSurf.min ** 2 + sSurf.min ** 2);
-    const surfMax = Math.sqrt(pSurf.max ** 2 + sSurf.max ** 2);
+    // Dominant-wave approach: report the larger swell rather than summing both.
+    // Prevents over-reporting on messy beach breaks with multiple small swell trains.
+    const surfMin = Math.max(pSurf.min, sSurf.min);
+    const surfMax = Math.max(pSurf.max, sSurf.max);
 
     // Condition Rating
     const dominant = pSurf.max >= sSurf.max ? pSurf : sSurf;
@@ -148,12 +150,12 @@ const ForecastTable = ({ data, spotId, spotsMetadata, inputScaleFactor = 1.0, en
       windDir: windDir,
       gust: data.wind_gusts?.[i] ?? 0,
       primarySwell: {
-        height: pSwellHeight,
+        height: parseFloat(((pSwellHeight ?? 0) * inputScaleFactor).toFixed(2)),
         period: Math.round(pSwellPeriod),
         dir: pSwellDir,
       },
       secondarySwell: {
-        height: sSwellHeight,
+        height: parseFloat(((sSwellHeight ?? 0) * inputScaleFactor).toFixed(2)),
         period: Math.round(sSwellPeriod),
         dir: sSwellDir,
       },
