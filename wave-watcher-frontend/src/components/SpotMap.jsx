@@ -80,7 +80,7 @@ const WindyIcon = ({ wind, swells }) => {
   });
 };
 
-const SpotMap = ({ lat, lon, spotName, wind, swells }) => {
+const SpotMap = ({ lat, lon, wind, swells }) => {
   const position = [lat, lon];
   const windyIcon = useMemo(() => WindyIcon({ wind, swells }), [wind, swells]);
 

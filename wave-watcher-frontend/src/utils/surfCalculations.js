@@ -1,3 +1,17 @@
+import { BREAK_AMPLIFICATION, MIN_SURF_PERIOD } from './spotConstants';
+
+/**
+ * isAngleInRange
+ * Returns true if `angle` falls within [start, end].
+ * Handles ranges that wrap around North, e.g. [330, 30] for NNW–NNE.
+ */
+const isAngleInRange = (angle, range) => {
+  if (!range || range.length !== 2) return false;
+  const [start, end] = range;
+  const a = ((angle % 360) + 360) % 360;
+  return start <= end ? (a >= start && a <= end) : (a >= start || a <= end);
+};
+
 export const calculateSurfHeight = (
   swellHeight,
   swellPeriod,
@@ -5,7 +19,23 @@ export const calculateSurfHeight = (
   windDir,
   windSpeed,
   spotMeta,
+  inputScaleFactor = 1.0,   // ADD — corrects Open-Meteo model bias per region
 ) => {
+  // Scale raw Hs to correct Open-Meteo's systematic overestimation vs LOTUS/MSW.
+  // Factor comes from the backend API response (meta.inputScaleFactor).
+  const scaledHeight = swellHeight * inputScaleFactor;
+
+  // Breaking factor is the PRIMARY Hs→face height converter.
+  // Starts below 1.0 — short-period wind chop barely breaks as a face.
+  // Scales up with period as longer swells shoal more aggressively.
+  //
+  // Reference targets (face/Hs_scaled, beach break, no directional penalty):
+  //   6s  → 0.40–0.55 (wind chop)       10s → 0.56–0.73 (avg groundswell)
+  //   8s  → 0.48–0.64 (gutless)         13s → 0.68–0.87 (solid — Surfline ref)
+  //   16s → 0.80–1.00 (long period)     20s → 0.96–1.18 (max shoaling)
+  const breakingBaseMin = 0.40 + (swellPeriod - 6) * 0.040;
+  const breakingBaseMax = 0.55 + (swellPeriod - 6) * 0.045;
+
   // If no spot metadata or missing critical calculation params, return a basic estimation
   if (
     !spotMeta ||
@@ -13,11 +43,10 @@ export const calculateSurfHeight = (
     spotMeta.optimalSwellDir === undefined ||
     spotMeta.facingDir === undefined
   ) {
-    const breakingBaseMin = 0.5 + (swellPeriod - 6) * 0.045;
-    const breakingBaseMax = 0.8 + (swellPeriod - 6) * 0.055;
+    const defaultAmp = 1.5;
     return {
-      min: Math.max(0.1, swellHeight * breakingBaseMin),
-      max: Math.max(0.2, swellHeight * breakingBaseMax),
+      min: Math.max(0.1, scaledHeight * breakingBaseMin * defaultAmp),
+      max: Math.max(0.2, scaledHeight * breakingBaseMax * defaultAmp),
       windFactor: 1.0,
       directionalFactor: 1.0,
     };
@@ -36,54 +65,74 @@ export const calculateSurfHeight = (
     const finalDiff = diff > 180 ? 360 - diff : diff;
 
     // Plateau logic: Spots wrap swell.
-    // Increased plateau from 30 to 45 degrees for better wrap coverage
     if (finalDiff <= 45) {
       directionalFactor = 1.0;
     } else {
       const halfWindow = (maxWin - minWin) / 2;
-      // Softer falloff (using 1.3 multiplier instead of 1.1)
       directionalFactor = Math.max(0.4, 1 - finalDiff / (halfWindow * 1.3));
     }
   } else {
-    directionalFactor = 0.3; // Increased wrap baseline from 0.2
-  }
+    // SOFT SHOULDER: Instead of a cliff, ramp down over 20 degrees
+    const distToMin = Math.min(Math.abs(sDir - minWin), 360 - Math.abs(sDir - minWin));
+    const distToMax = Math.min(Math.abs(sDir - maxWin), 360 - Math.abs(sDir - maxWin));
+    const minDist = Math.min(distToMin, distToMax);
 
-  // 2. Breaking Factor (Period dependent - Shoaling)
-  // Slightly boosted growth for mid-to-long periods
-  const breakingBaseMin = 0.5 + (swellPeriod - 6) * 0.045;
-  const breakingBaseMax = 0.8 + (swellPeriod - 6) * 0.055;
-
-  // 3. Wind Factor (The "Epic" vs "Blown Out" modifier)
-  let windFactor = 1.0;
-  if (windSpeed > 4) {
-    const wDir = normalize(windDir);
-    const beachFacing = normalize(spotMeta.facingDir);
-
-    // Calculate angle between wind and "straight offshore" (which is beachFacing + 180)
-    const offshoreDir = normalize(beachFacing + 180);
-    const windFromOffshoreDiff = Math.abs(wDir - offshoreDir);
-    const diff =
-      windFromOffshoreDiff > 180
-        ? 360 - windFromOffshoreDiff
-        : windFromOffshoreDiff;
-
-    if (diff < 45) {
-      windFactor = 1.15; // Increased from 1.1
-    } else if (diff > 135) {
-      windFactor = 0.8; // More penalty for onshore (was 0.85)
+    if (minDist <= 20) {
+      // Ramp from 0.4 down to 0.2 over 20 degrees
+      directionalFactor = 0.4 - (minDist / 20) * 0.2;
     } else {
-      windFactor = 0.9; // More penalty for side-shore (was 0.95)
+      directionalFactor = 0.2; // deep shadow zone
     }
   }
+
+  // 3. Wind Factor
+  let windFactor = 1.0;
+  if (windSpeed > 4) {
+    const hasExplicitRanges =
+      spotMeta?.offshore_wind?.length === 2 &&
+      spotMeta?.onshore_wind?.length === 2;
+
+    if (hasExplicitRanges) {
+      // Use the spot's declared wind ranges (from spots.json via spotConfig).
+      // These are more accurate than geometry, especially for spots where
+      // offshore wraps through North (e.g. offshore_wind: [200, 20]).
+      const isOffshore = isAngleInRange(windDir, spotMeta.offshore_wind);
+      const isOnshore  = isAngleInRange(windDir, spotMeta.onshore_wind);
+
+      if (isOffshore) {
+        windFactor = 1.25;
+      } else if (isOnshore) {
+        windFactor = 0.75;
+      } else {
+        windFactor = 0.90; // cross-shore
+      }
+    } else {
+      // Geometric fallback for spots without explicit ranges.
+      const wDir = normalize(windDir);
+      const offshoreDir = normalize(spotMeta.facingDir + 180);
+      const rawDiff = Math.abs(wDir - offshoreDir);
+      const diff = rawDiff > 180 ? 360 - rawDiff : rawDiff;
+      windFactor = diff < 45 ? 1.25 : diff > 135 ? 0.75 : 0.90;
+    }
+  }
+
+  // Resolve amplification: spot-level → break-type global → fallback
+  const amp =
+    spotMeta.amplification ||
+    BREAK_AMPLIFICATION[spotMeta.breakType] ||
+    BREAK_AMPLIFICATION.beach;
+
+  // Wind penalizes height only when strong onshore
+  const heightWindPenalty = (windFactor < 0.9 && windSpeed > 20) ? 0.85 : 1.0;
 
   return {
     min: Math.max(
       0.1,
-      swellHeight * breakingBaseMin * directionalFactor * windFactor,
+      scaledHeight * breakingBaseMin * directionalFactor * amp * heightWindPenalty,
     ),
     max: Math.max(
       0.2,
-      swellHeight * breakingBaseMax * directionalFactor * windFactor,
+      scaledHeight * breakingBaseMax * directionalFactor * amp * heightWindPenalty,
     ),
     windFactor,
     directionalFactor,
@@ -95,58 +144,74 @@ export const calculateConditionRating = (
   windSpeed,
   windFactor,
   directionalFactor,
+  breakType = "beach" // ADDED: to differentiate spot sensitivity
 ) => {
   if (maxSurf < 0.2) return "FLAT";
-  if (windSpeed > 45) return "BLOWN OUT"; // Increased from 35
+  if (windSpeed > 45) return "BLOWN OUT";
+  
+  // High wind onshore penalty
   if (windFactor < 0.8 && windSpeed > 25) return "BLOWN OUT";
 
-  // Strict Scoring (0-10)
   let score = 0;
 
-  // 1. Height Score (0-4)
-  if (maxSurf >= 0.8 && maxSurf <= 2.8) score += 4; // Adjusted range
-  else if (maxSurf >= 0.5) score += 3; // Waist to chest high
-  else if (maxSurf >= 0.3) score += 1; // Knee high
-  else score += 0;
-
-  // 2. Wind Score (0-4)
-  if (windFactor >= 1.05) {
-    // Offshore
-    if (windSpeed < 15) score += 4; // Light offshore (Groomed) - increased from 12
-    else if (windSpeed < 32)
-      score += 3; // Moderate offshore - increased from 22, score from 2
-    else score += 1; // Strong offshore - still manageable, score from 0
-  } else if (windFactor >= 0.9) {
-    // Glassy/Light Side
-    if (windSpeed < 8) score += 3; // Glassy
-    else score += 1; // Textured
+  // 1. SIZE SCORE (Scaled by Break Type)
+  if (breakType === "reef" || breakType === "point") {
+    // Reefs/Points need more size to "work"
+    if (maxSurf >= 1.0 && maxSurf <= 3.0) score += 5;
+    else if (maxSurf >= 0.7) score += 3;
+    else if (maxSurf >= 0.4) score += 1;
+    else score -= 1; // Reefs are usually poor when tiny
   } else {
-    // Onshore
-    score -= 1;
+    // Beach breaks are fun even when small
+    if (maxSurf >= 0.8 && maxSurf <= 2.2) score += 5;
+    else if (maxSurf >= 0.5) score += 4;
+    else if (maxSurf >= 0.3) score += 2;
   }
 
-  // 3. Swell Quality (0-2)
+  // 2. WIND SCORE (The "Glassy Morning" Factor)
+  const isGlassy = windSpeed < 10;
+  const isLight = windSpeed < 18;
+
+  if (windFactor >= 1.10) { 
+    // Offshore
+    if (isGlassy) score += 5; // EPIC Glassy Offshore
+    else if (isLight) score += 4;
+    else score += 2;
+  } else if (windFactor >= 0.90 || isGlassy) {
+    // Cross-shore OR Glassy (any direction)
+    if (isGlassy) score += 4; // Morning glass bonus
+    else if (isLight) score += 2;
+    else score += 1;
+  } else {
+    // Onshore
+    if (isGlassy) score += 2; // Onshore but so light it doesn't matter
+    else if (isLight) score -= 1;
+    else score -= 3;
+  }
+
+  // 3. DIRECTIONAL SCORE
   if (directionalFactor >= 0.9) score += 2;
   else if (directionalFactor >= 0.7) score += 1;
+  else if (directionalFactor < 0.4) score -= 2;
 
-  if (score >= 9) return "EPIC";
+  // 4. FINAL RATING
+  if (score >= 10) return "EPIC";
   if (score >= 7) return "GOOD";
   if (score >= 4) return "FAIR";
   return "POOR";
 };
 
-export const calculateEnergy = (height, period) => {
-  // KJ Match: H^2 * T * 14 (Derived from Surfline's 586kJ at 2.2m 11s)
-  return Math.round(height * height * period * 14);
+export const calculateEnergy = (height, period, energyMultiplier = 14) => {
+  // Default 14 is tuned for Indo/Sumatran swell power.
+  // Pass the region-specific value from meta.energyMultiplier for accuracy elsewhere.
+  return Math.round(height * height * period * energyMultiplier);
 };
 
 export const getRatingSegments = (r) => {
   const segments = [false, false, false, false, false];
   let label = "N/A";
   let color = "bg-slate-200";
-
   if (!r) return { segments, label, color };
-
   if (r.includes("RAINY")) {
     segments[0] = segments[1] = true;
     label = "RAINY";
@@ -176,16 +241,13 @@ export const getRatingSegments = (r) => {
     label = "EPIC";
     color = "bg-purple-500";
   }
-
   return { segments, label, color };
 };
 
 export const getSurfDesc = (range) => {
   if (!range) return "N/A";
-  // Extract the max height from the range (e.g., "0.9–1.4m" -> 1.4)
   const parts = range.split("–");
   const height = parseFloat(parts[parts.length - 1]);
-
   if (height < 0.3) return "Flat";
   if (height < 0.7) return "Knee to thigh";
   if (height < 1.1) return "Waist to chest";

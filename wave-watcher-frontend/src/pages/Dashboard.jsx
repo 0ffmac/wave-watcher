@@ -26,6 +26,8 @@ const Dashboard = ({
     temperatures,
     tide,
     hourly,
+    inputScaleFactor,
+    energyMultiplier,
   } = transformedData;
 
   return (
@@ -58,6 +60,8 @@ const Dashboard = ({
             data={hourly}
             spotId={activeSpotId}
             spotsMetadata={SPOTS}
+            inputScaleFactor={inputScaleFactor ?? 1.0}
+            energyMultiplier={energyMultiplier ?? 14}
           />
         </div>
         <div className="xl:col-span-1">
