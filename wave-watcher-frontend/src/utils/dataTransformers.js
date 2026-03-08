@@ -54,20 +54,44 @@ export const transformForecastData = (data, activeSpotId) => {
   const finalScaleFactor = inputScaleFactor * spotScaleFactor;
   const energyMultiplier = data?.meta?.energyMultiplier ?? 14;
 
+  // ── Surgical Regional Sync ──────────────────────────────────────────────────
+  // France (fr_) spots have unreliable current telemetry. Force hourly[0] sync.
+  const needsHourlySync = activeSpotId?.startsWith('fr_');
+
   // Dynamic Surf Range Calculation
-  const currentSwell = data?.current?.swells?.[0] || {
-    height: 0,
-    period: 0,
-    direction: 0,
-  };
-  const currentWind = data?.current?.wind || { speed: 0, direction: 0 };
+  const currentSwell = needsHourlySync
+    ? {
+        height:    data?.hourly?.swell_height?.[0]    || 0,
+        period:    data?.hourly?.swell_period?.[0]    || 0,
+        direction: data?.hourly?.swell_direction?.[0] || 0,
+      }
+    : (data?.current?.swells?.[0] || {
+        height: 0,
+        period: 0,
+        direction: 0,
+      });
+
+  const wind = needsHourlySync
+    ? {
+        speed:     data?.hourly?.wind_speed?.[0]     || 0,
+        direction: data?.hourly?.wind_direction?.[0] || 0,
+        gusts:     data?.hourly?.wind_gusts?.[0]     || 0,
+        compass:   "N/A", // Will be resolved by SwellDetails
+        texture:   "N/A",
+      }
+    : (data?.current?.wind || {
+        speed: 0,
+        direction: 0,
+        compass: "N/A",
+        texture: "N/A",
+      });
 
   const calculatedSurf = calculateSurfHeight(
     currentSwell.height,
     currentSwell.period,
     currentSwell.direction,
-    currentWind.direction,
-    currentWind.speed,
+    wind.direction,
+    wind.speed,
     spotData,
     finalScaleFactor
   );
@@ -75,39 +99,46 @@ export const transformForecastData = (data, activeSpotId) => {
   const surfRange = `${calculatedSurf.min.toFixed(1)}–${calculatedSurf.max.toFixed(1)}m`;
   const rating = calculateConditionRating(
     calculatedSurf.max,
-    currentWind.speed,
+    wind.speed,
     calculatedSurf.windFactor,
     calculatedSurf.directionalFactor,
     spotData.breakType
   );
 
-  const swells = data?.current?.swells || [];
+  const swellsSource = needsHourlySync
+    ? [
+        {
+          height:    data?.hourly?.swell_height?.[0]    || 0,
+          period:    data?.hourly?.swell_period?.[0]    || 0,
+          direction: data?.hourly?.swell_direction?.[0] || 0,
+        },
+        {
+          height:    data?.hourly?.secondary_swell_height?.[0]    || 0,
+          period:    data?.hourly?.secondary_swell_period?.[0]    || 0,
+          direction: data?.hourly?.secondary_swell_direction?.[0] || 0,
+        },
+      ]
+    : (data?.current?.swells || []);
+
   const mapSwells = [
     {
       height: parseFloat(
-        ((swells?.[0]?.height ?? data?.hourly?.swell_height?.[0] ?? 0) * finalScaleFactor).toFixed(2)
+        ((swellsSource?.[0]?.height ?? data?.hourly?.swell_height?.[0] ?? 0) * finalScaleFactor).toFixed(2)
       ),
-      period: swells?.[0]?.period ?? data?.hourly?.swell_period?.[0] ?? 0,
-      direction: swells?.[0]?.direction ?? data?.hourly?.swell_direction?.[0] ?? 0,
+      period: swellsSource?.[0]?.period ?? data?.hourly?.swell_period?.[0] ?? 0,
+      direction: swellsSource?.[0]?.direction ?? data?.hourly?.swell_direction?.[0] ?? 0,
     },
     {
       height: parseFloat(
-        ((swells?.[1]?.height ?? data?.hourly?.secondary_swell_height?.[0] ?? 0) * finalScaleFactor).toFixed(2)
+        ((swellsSource?.[1]?.height ?? data?.hourly?.secondary_swell_height?.[0] ?? 0) * finalScaleFactor).toFixed(2)
       ),
-      period: swells?.[1]?.period ?? data?.hourly?.secondary_swell_period?.[0] ?? 0,
-      direction: swells?.[1]?.direction ?? data?.hourly?.secondary_swell_direction?.[0] ?? 0,
+      period: swellsSource?.[1]?.period ?? data?.hourly?.secondary_swell_period?.[0] ?? 0,
+      direction: swellsSource?.[1]?.direction ?? data?.hourly?.secondary_swell_direction?.[0] ?? 0,
     },
   ];
 
   const now = new Date();
   const currentIdx = data?.hourly?.times?.findIndex(t => new Date(t) >= now) ?? 0;
-
-  const wind = data?.current?.wind || {
-    speed: 0,
-    direction: 0,
-    compass: "N/A",
-    texture: "N/A",
-  };
 
   const temperatures = data?.current?.temperatures || (data?.hourly?.temperature && data?.hourly?.sea_surface_temperature
     ? {
