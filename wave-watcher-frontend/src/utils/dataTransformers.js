@@ -45,6 +45,15 @@ export const transformForecastData = (data, activeSpotId) => {
   const lat = spotData.lat || 0;
   const lon = spotData.lon || 0;
 
+  // ── Scale Factor Resolution ────────────────────────────────────────────────
+  // inputScaleFactor: regional Open-Meteo model bias correction (from backend)
+  // spotScaleFactor:  per-spot physical tuning (canyon, shelf, etc.)
+  // finalScaleFactor: combined — used for ALL height calculations and display
+  const inputScaleFactor = data?.meta?.inputScaleFactor ?? 1.0;
+  const spotScaleFactor  = spotData?.spotScaleFactor ?? 1.0;
+  const finalScaleFactor = inputScaleFactor * spotScaleFactor;
+  const energyMultiplier = data?.meta?.energyMultiplier ?? 14;
+
   // Dynamic Surf Range Calculation
   const currentSwell = data?.current?.swells?.[0] || {
     height: 0,
@@ -53,11 +62,6 @@ export const transformForecastData = (data, activeSpotId) => {
   };
   const currentWind = data?.current?.wind || { speed: 0, direction: 0 };
 
-  // Read calibration values from backend metadata.
-  // Defaults are safe fallbacks if backend is an older version.
-  const inputScaleFactor = data?.meta?.inputScaleFactor ?? 1.0;
-  const energyMultiplier = data?.meta?.energyMultiplier ?? 14;
-
   const calculatedSurf = calculateSurfHeight(
     currentSwell.height,
     currentSwell.period,
@@ -65,7 +69,7 @@ export const transformForecastData = (data, activeSpotId) => {
     currentWind.direction,
     currentWind.speed,
     spotData,
-    inputScaleFactor
+    finalScaleFactor
   );
 
   const surfRange = `${calculatedSurf.min.toFixed(1)}–${calculatedSurf.max.toFixed(1)}m`;
@@ -74,21 +78,21 @@ export const transformForecastData = (data, activeSpotId) => {
     currentWind.speed,
     calculatedSurf.windFactor,
     calculatedSurf.directionalFactor,
-    spotData.breakType // ADDED
+    spotData.breakType
   );
 
   const swells = data?.current?.swells || [];
   const mapSwells = [
     {
       height: parseFloat(
-        ((swells?.[0]?.height ?? data?.hourly?.swell_height?.[0] ?? 0) * inputScaleFactor).toFixed(2)
+        ((swells?.[0]?.height ?? data?.hourly?.swell_height?.[0] ?? 0) * finalScaleFactor).toFixed(2)
       ),
       period: swells?.[0]?.period ?? data?.hourly?.swell_period?.[0] ?? 0,
       direction: swells?.[0]?.direction ?? data?.hourly?.swell_direction?.[0] ?? 0,
     },
     {
       height: parseFloat(
-        ((swells?.[1]?.height ?? data?.hourly?.secondary_swell_height?.[0] ?? 0) * inputScaleFactor).toFixed(2)
+        ((swells?.[1]?.height ?? data?.hourly?.secondary_swell_height?.[0] ?? 0) * finalScaleFactor).toFixed(2)
       ),
       period: swells?.[1]?.period ?? data?.hourly?.secondary_swell_period?.[0] ?? 0,
       direction: swells?.[1]?.direction ?? data?.hourly?.secondary_swell_direction?.[0] ?? 0,
@@ -147,6 +151,7 @@ export const transformForecastData = (data, activeSpotId) => {
     tide,
     hourly,
     inputScaleFactor,
+    finalScaleFactor,
     energyMultiplier,
     currentIdx,
   };

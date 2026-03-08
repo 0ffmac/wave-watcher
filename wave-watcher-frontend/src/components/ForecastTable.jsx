@@ -42,7 +42,13 @@ const getCardinal = (deg) => {
   return dirs[ix % 16];
 };
 
-const ForecastTable = ({ data, spotId, spotsMetadata, inputScaleFactor = 1.0, energyMultiplier = 14 }) => {
+const ForecastTable = ({
+  data,
+  spotId,
+  spotsMetadata,
+  finalScaleFactor = 1.0,   // replaces inputScaleFactor — combined regional + spot factor
+  energyMultiplier = 14,
+}) => {
   const [expandedDays, setExpandedDays] = useState({});
   const spotMeta = spotsMetadata?.[spotId];
 
@@ -95,7 +101,7 @@ const ForecastTable = ({ data, spotId, spotsMetadata, inputScaleFactor = 1.0, en
       windDir,
       windSpeed,
       spotMeta,
-      inputScaleFactor,
+      finalScaleFactor,
     );
     const sSurf = (sSwellPeriod >= MIN_SURF_PERIOD)
       ? calculateSurfHeight(
@@ -105,7 +111,7 @@ const ForecastTable = ({ data, spotId, spotsMetadata, inputScaleFactor = 1.0, en
           windDir,
           windSpeed,
           spotMeta,
-          inputScaleFactor,
+          finalScaleFactor,
         )
       : { min: 0, max: 0, windFactor: 1.0, directionalFactor: 1.0 };
 
@@ -150,12 +156,12 @@ const ForecastTable = ({ data, spotId, spotsMetadata, inputScaleFactor = 1.0, en
       windDir: windDir,
       gust: data.wind_gusts?.[i] ?? 0,
       primarySwell: {
-        height: parseFloat(((pSwellHeight ?? 0) * inputScaleFactor).toFixed(2)),
+        height: parseFloat(((pSwellHeight ?? 0) * finalScaleFactor).toFixed(2)),
         period: Math.round(pSwellPeriod),
         dir: pSwellDir,
       },
       secondarySwell: {
-        height: parseFloat(((sSwellHeight ?? 0) * inputScaleFactor).toFixed(2)),
+        height: parseFloat(((sSwellHeight ?? 0) * finalScaleFactor).toFixed(2)),
         period: Math.round(sSwellPeriod),
         dir: sSwellDir,
       },

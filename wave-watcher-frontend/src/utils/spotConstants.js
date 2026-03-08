@@ -20,7 +20,6 @@
  *                     → or tell backend to increase inputScaleFactor in REGION_CONFIG
  */
 
-
 // ---------------------------------------------------------------------------
 // BREAK_AMPLIFICATION
 // Small break-type modifier applied after the breaking factor.
@@ -33,11 +32,21 @@
 //   beach → face ≈ 0.65–0.87× Hs_scaled
 // ---------------------------------------------------------------------------
 export const BREAK_AMPLIFICATION = {
-  reef:  1.30,
-  point: 1.15,
-  beach: 1.00,
-};
+  // ── Core types ────────────────────────────────────────────────────────────
+  reef: 1.3, // Abrupt-bathymetry reef breaks (G-Land, Uluwatu)
+  point: 1.15, // Headland point breaks (Jenny's Right, Rincon)
+  beach: 1.0, // Standard beach breaks (generic default)
 
+  // ── Regional specialisations ──────────────────────────────────────────────
+  heavy_beach: 1.4, // Canyon-focused or high-energy beach breaks (La Gravière,
+  // Black's Beach). Canyon "magnifying glass" effect amplifies
+  // swell energy above what a standard beach produces.
+
+  soft_beach: 0.85, // Shallow continental-shelf beach breaks (Florida East Coast).
+  // Swell energy is lost to bottom friction across the wide shelf
+  // before reaching the break — face height lower than open-ocean
+  // models predict.
+};
 
 // ---------------------------------------------------------------------------
 // MIN_SURF_PERIOD
@@ -47,7 +56,6 @@ export const BREAK_AMPLIFICATION = {
 // falsely inflate surf height if included in the quadrature sum.
 // ---------------------------------------------------------------------------
 export const MIN_SURF_PERIOD = 7;
-
 
 // ---------------------------------------------------------------------------
 // SWELL_WINDOW_DEFAULTS

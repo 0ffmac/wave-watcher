@@ -54,9 +54,9 @@ const NearbySpots = ({ activeSpotId, activeCountryKey, activeRegionKey, currentS
               <span className="text-[11px] font-black text-slate-800 tracking-tight group-hover:text-blue-600 transition-colors truncate">{spot.name}</span>
               <div className="flex items-center gap-2">
                 <span className="text-[9px] font-bold text-slate-400 whitespace-nowrap">{spot.surfRange}</span>
-                <div className="flex gap-0.5">
+                <div className="flex gap-1">
                    {spot.ratingInfo.segments.map((active, i) => (
-                     <div key={i} className={`w-1.5 h-0.5 rounded-full ${active ? spot.ratingInfo.color : 'bg-slate-100'}`} />
+                     <div key={i} className={`w-1 h-1 rounded-full ${active ? spot.ratingInfo.color : 'bg-slate-100'}`} />
                    ))}
                 </div>
               </div>

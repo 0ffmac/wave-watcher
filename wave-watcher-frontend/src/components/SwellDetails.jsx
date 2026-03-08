@@ -120,11 +120,11 @@ const SwellDetails = ({
               >
                 {ratingInfo.label}
               </span>
-              <div className="flex gap-1">
+              <div className="flex gap-1.5">
                 {ratingInfo.segments.map((active, i) => (
                   <div
                     key={i}
-                    className={`w-6 h-2 rounded-sm ${active ? ratingInfo.color : "bg-slate-100"}`}
+                    className={`w-2 h-2 rounded-full ${active ? ratingInfo.color : "bg-slate-100"}`}
                   />
                 ))}
               </div>
