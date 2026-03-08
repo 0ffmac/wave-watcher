@@ -5,6 +5,7 @@ import {
   Navigation,
   Droplets,
   Sun,
+  Cloud,
   CloudRain,
   ChevronDown,
   ChevronRight,
@@ -14,6 +15,7 @@ import {
   calculateEnergy,
   calculateConditionRating,
 } from "../utils/surfCalculations";
+import { MIN_SURF_PERIOD } from '../utils/spotConstants';
 
 // Helper for cardinal directions
 const getCardinal = (deg) => {
@@ -40,7 +42,7 @@ const getCardinal = (deg) => {
   return dirs[ix % 16];
 };
 
-const ForecastTable = ({ data, spotId, spotsMetadata }) => {
+const ForecastTable = ({ data, spotId, spotsMetadata, inputScaleFactor = 1.0, energyMultiplier = 14 }) => {
   const [expandedDays, setExpandedDays] = useState({});
   const spotMeta = spotsMetadata?.[spotId];
 
@@ -85,7 +87,7 @@ const ForecastTable = ({ data, spotId, spotsMetadata }) => {
     const windSpeed = data.wind_speed?.[i] ?? 0;
     const windDir = data.wind_direction?.[i] ?? 0;
 
-    // Calculate surf from both swells and take the max
+    // Calculate surf from both swells
     const pSurf = calculateSurfHeight(
       pSwellHeight,
       pSwellPeriod,
@@ -93,25 +95,31 @@ const ForecastTable = ({ data, spotId, spotsMetadata }) => {
       windDir,
       windSpeed,
       spotMeta,
+      inputScaleFactor,
     );
-    const sSurf = calculateSurfHeight(
-      sSwellHeight,
-      sSwellPeriod,
-      sSwellDir,
-      windDir,
-      windSpeed,
-      spotMeta,
-    );
+    const sSurf = (sSwellPeriod >= MIN_SURF_PERIOD)
+      ? calculateSurfHeight(
+          sSwellHeight,
+          sSwellPeriod,
+          sSwellDir,
+          windDir,
+          windSpeed,
+          spotMeta,
+          inputScaleFactor,
+        )
+      : { min: 0, max: 0, windFactor: 1.0, directionalFactor: 1.0 };
 
-    const surfMin = Math.max(pSurf.min, sSurf.min);
-    const surfMax = Math.max(pSurf.max, sSurf.max);
+    const surfMin = Math.sqrt(pSurf.min ** 2 + sSurf.min ** 2);
+    const surfMax = Math.sqrt(pSurf.max ** 2 + sSurf.max ** 2);
 
     // Condition Rating
+    const dominant = pSurf.max >= sSurf.max ? pSurf : sSurf;
     const rating = calculateConditionRating(
       surfMax,
       windSpeed,
-      pSurf.windFactor,
-      pSurf.directionalFactor,
+      dominant.windFactor,
+      dominant.directionalFactor,
+      spotMeta?.breakType // ADDED
     );
     const getRatingColor = (r) => {
       if (r === "EPIC") return "bg-purple-500";
@@ -123,7 +131,10 @@ const ForecastTable = ({ data, spotId, spotsMetadata }) => {
     };
 
     // Energy: centralized calculation
-    const energyValue = calculateEnergy(pSwellHeight, pSwellPeriod);
+    const eMult = energyMultiplier;
+    const energyValue =
+      calculateEnergy(pSwellHeight, pSwellPeriod, eMult) +
+      calculateEnergy(sSwellHeight, sSwellPeriod, eMult);
 
     dayEntry.allHours.push({
       timestamp: date,
@@ -135,6 +146,7 @@ const ForecastTable = ({ data, spotId, spotsMetadata }) => {
       ratingColor: getRatingColor(rating),
       wind: windSpeed,
       windDir: windDir,
+      gust: data.wind_gusts?.[i] ?? 0,
       primarySwell: {
         height: pSwellHeight,
         period: Math.round(pSwellPeriod),
@@ -147,6 +159,8 @@ const ForecastTable = ({ data, spotId, spotsMetadata }) => {
       },
       energy: energyValue,
       temp: Math.round(data.temperature?.[i] ?? 26),
+      rain: data.rain?.[i] ?? 0,
+      cloudCover: data.cloud_cover?.[i] ?? 0,
     });
   });
 
@@ -209,7 +223,7 @@ const ForecastTable = ({ data, spotId, spotsMetadata }) => {
                     <th className="px-2 py-2 w-32">Wind</th>
                     <th className="px-2 py-2 text-center w-20">Energy</th>
                     <th className="px-2 py-2 text-center w-20">Weather</th>
-                    <th className="pr-6 py-2 text-right w-16">Prob.</th>
+                    <th className="pr-6 py-2 text-right w-16">Rain</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100/20">
@@ -294,7 +308,8 @@ const ForecastTable = ({ data, spotId, spotsMetadata }) => {
                               {row.wind.toFixed(0)}
                             </span>
                             <span className="text-[8px] font-bold text-red-400/70">
-                              {(row.wind * 1.3).toFixed(0)}
+                              {row.gust.toFixed(0)}
+                              <span className="text-[7px] opacity-60 ml-0.5">g</span>
                             </span>
                           </div>
                           <div className="flex items-center gap-1 bg-blue-50/50 px-1.5 py-0.5 rounded-md border border-blue-100/50">
@@ -321,11 +336,12 @@ const ForecastTable = ({ data, spotId, spotsMetadata }) => {
 
                       <td className="px-2 py-2">
                         <div className="flex items-center justify-center gap-1.5">
-                          {row.hour >= 6 && row.hour <= 18 ? (
-                            <Sun size={12} className="text-amber-400" />
-                          ) : (
-                            <CloudRain size={12} className="text-slate-300" />
-                          )}
+                          {(() => {
+                            const isDay = row.hour >= 6 && row.hour <= 18;
+                            if (row.rain > 0.5) return <CloudRain size={12} className="text-blue-400" />;
+                            if (isDay && row.cloudCover < 40) return <Sun size={12} className="text-amber-400" />;
+                            return <Cloud size={12} className="text-slate-300" />;
+                          })()}
                           <span className="font-black text-slate-600 text-[10px]">
                             {row.temp}°
                           </span>
@@ -334,7 +350,10 @@ const ForecastTable = ({ data, spotId, spotsMetadata }) => {
 
                       <td className="pr-6 py-2 text-right">
                         <span className="font-black text-slate-400 text-[9px] tracking-widest">
-                          100%
+                          {row.rain > 0 ? `${row.rain.toFixed(1)}` : "–"}
+                          {row.rain > 0 && (
+                            <span className="text-[7px] ml-0.5 opacity-50">mm</span>
+                          )}
                         </span>
                       </td>
                     </tr>

@@ -5,7 +5,6 @@ import { Loader2 } from "lucide-react";
 const MapPage = ({
   data,
   loading,
-  error,
   activeSpotId,
   activeCountryKey,
   activeRegionKey,

@@ -17,7 +17,6 @@ const SwellDetails = ({
   temperatures,
   tide,
   tideForecast,
-  times,
   rating,
   surfRange,
   activeSpotId,
@@ -50,46 +49,6 @@ const SwellDetails = ({
 
   const ratingInfo = getRatingSegments(rating);
 
-  // Helper to find high/low tides from forecast
-  const getTideHighLows = () => {
-    if (!tideForecast || !times || tideForecast.length < 12) return [];
-
-    // Simple peak/trough detection
-    const highLows = [];
-    const windowSize = 4; // Check neighboring points
-
-    for (let i = windowSize; i < tideForecast.length - windowSize; i++) {
-      const prev = tideForecast.slice(i - windowSize, i);
-      const next = tideForecast.slice(i + 1, i + windowSize + 1);
-      const current = tideForecast[i];
-
-      const isHigh =
-        prev.every((v) => v < current) && next.every((v) => v < current);
-      const isLow =
-        prev.every((v) => v > current) && next.every((v) => v > current);
-
-      if (isHigh || isLow) {
-        const time = new Date(times[i]);
-        highLows.push({
-          type: isHigh ? "High" : "Low",
-          height: current,
-          time: time
-            .toLocaleTimeString([], {
-              hour: "numeric",
-              minute: "2-digit",
-              hour12: true,
-            })
-            .toLowerCase(),
-          index: i,
-        });
-        i += windowSize; // Skip ahead to avoid multiple detections for same peak
-      }
-    }
-    return highLows.slice(0, 3); // Return first 3 events
-  };
-
-  const highLows = getTideHighLows();
-
   // Generate tide path
   const getTidePath = () => {
     if (!tideForecast || tideForecast.length < 24) return "";
@@ -109,22 +68,6 @@ const SwellDetails = ({
     }
     return path;
   };
-  // const getTidePath = () => {
-  //   if (!tideForecast || tideForecast.length < 24) return "";
-  //   const slice = tideForecast.slice(0, 24);
-  //   const min = Math.min(...slice);
-  //   const max = Math.max(...slice);
-  //   const range = max - min || 1;
-  //
-  //   // Adjusted scaling to fit better: swing of 20 units, offset by 12 from bottom
-  //   let path = `M 0 ${40 - ((slice[0] - min) / range) * 20 - 12}`;
-  //   for (let i = 1; i < slice.length; i++) {
-  //     const x = (i / (slice.length - 1)) * 100;
-  //     const y = 40 - ((slice[i] - min) / range) * 20 - 12;
-  //     path += ` L ${x} ${y}`;
-  //   }
-  //   return path;
-  // };
 
   const tidePath = getTidePath();
 
@@ -338,7 +281,7 @@ const SwellDetails = ({
                 )}
               </div>
 
-              {/* Elaborate Tide Graph */}
+              {/* Tide Graph */}
               <div className="mt-4 h-16 relative w-full overflow-hidden">
                 <svg
                   className="w-full h-full overflow-visible"
@@ -362,53 +305,18 @@ const SwellDetails = ({
                     strokeLinecap="round"
                   />
 
-                  {/* Update highLows lines to reach the new bottom */}
-                  {highLows.map((hl, i) => {
-                    const minT = Math.min(...tideForecast.slice(0, 24));
-                    const maxT = Math.max(...tideForecast.slice(0, 24));
-                    const rT = maxT - minT || 1;
-                    const yPos = 30 - ((hl.height - minT) / rT) * 20;
-
-                    return (
-                      <g key={i}>
-                        <line
-                          x1={(hl.index / 23) * 100}
-                          y1={yPos}
-                          x2={(hl.index / 23) * 100}
-                          y2="45" // Extend lines deeper into the new space
-                          stroke="#cbd5e1"
-                          strokeWidth="0.5"
-                          strokeDasharray="2 1"
-                        />
-                        <text
-                          x={(hl.index / 23) * 100}
-                          y={yPos - 8} // Adjusted spacing
-                          textAnchor="middle"
-                          className="text-[5px] font-black fill-slate-800 uppercase"
-                        >
-                          {hl.time}
-                        </text>
-                        <text
-                          x={(hl.index / 23) * 100}
-                          y={yPos - 3} // Adjusted spacing
-                          textAnchor="middle"
-                          className="text-[4px] font-bold fill-slate-400"
-                        >
-                          {hl.height.toFixed(1)}m
-                        </text>
-                      </g>
-                    );
-                  })}
                   {/* Current Position Marker */}
                   <circle
                     cx="0"
                     cy={
-                      30 -
-                      ((tideForecast?.[0] -
-                        Math.min(...tideForecast?.slice(0, 24))) /
-                        (Math.max(...tideForecast?.slice(0, 24)) -
-                          Math.min(...tideForecast?.slice(0, 24)) || 1)) *
-                        20
+                      tideForecast && tideForecast.length > 0 ? (
+                        30 -
+                        ((tideForecast[0] -
+                          Math.min(...tideForecast.slice(0, 24))) /
+                          (Math.max(...tideForecast.slice(0, 24)) -
+                            Math.min(...tideForecast.slice(0, 24)) || 1)) *
+                          20
+                      ) : 0
                     }
                     r="2.5"
                     fill="#3b82f6"

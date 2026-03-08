@@ -22,7 +22,8 @@ const NearbySpots = ({ activeSpotId, activeCountryKey, activeRegionKey, currentS
         surf.max,
         currentWind.speed,
         surf.windFactor,
-        surf.directionalFactor
+        surf.directionalFactor,
+        meta.breakType
       );
       
       return {

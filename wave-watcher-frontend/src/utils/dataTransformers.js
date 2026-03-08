@@ -52,13 +52,20 @@ export const transformForecastData = (data, activeSpotId) => {
     direction: 0,
   };
   const currentWind = data?.current?.wind || { speed: 0, direction: 0 };
+
+  // Read calibration values from backend metadata.
+  // Defaults are safe fallbacks if backend is an older version.
+  const inputScaleFactor = data?.meta?.inputScaleFactor ?? 1.0;
+  const energyMultiplier = data?.meta?.energyMultiplier ?? 14;
+
   const calculatedSurf = calculateSurfHeight(
     currentSwell.height,
     currentSwell.period,
     currentSwell.direction,
     currentWind.direction,
     currentWind.speed,
-    spotData
+    spotData,
+    inputScaleFactor
   );
 
   const surfRange = `${calculatedSurf.min.toFixed(1)}–${calculatedSurf.max.toFixed(1)}m`;
@@ -66,7 +73,8 @@ export const transformForecastData = (data, activeSpotId) => {
     calculatedSurf.max,
     currentWind.speed,
     calculatedSurf.windFactor,
-    calculatedSurf.directionalFactor
+    calculatedSurf.directionalFactor,
+    spotData.breakType // ADDED
   );
 
   const swells = data?.current?.swells || [];
@@ -106,6 +114,7 @@ export const transformForecastData = (data, activeSpotId) => {
     wave_height: data?.hourly?.wave_height || [],
     wind_speed: data?.hourly?.wind_speed || [],
     wind_direction: data?.hourly?.wind_direction || [],
+    wind_gusts: data?.hourly?.wind_gusts || [],
     swell_height: data?.hourly?.swell_height || [],
     swell_period: data?.hourly?.swell_period || [],
     swell_direction: data?.hourly?.swell_direction || [],
@@ -113,6 +122,8 @@ export const transformForecastData = (data, activeSpotId) => {
     secondary_swell_period: data?.hourly?.secondary_swell_period || [],
     secondary_swell_direction: data?.hourly?.secondary_swell_direction || [],
     temperature: data?.hourly?.temperature || [],
+    rain: data?.hourly?.rain || [],
+    cloud_cover: data?.hourly?.cloud_cover || [],
   };
 
   return {
@@ -128,5 +139,7 @@ export const transformForecastData = (data, activeSpotId) => {
     temperatures,
     tide,
     hourly,
+    inputScaleFactor,
+    energyMultiplier,
   };
 };
