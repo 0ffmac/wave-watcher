@@ -18,7 +18,7 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
-const ForecastChart = ({ data, spotId, spotsMetadata }) => {
+const ForecastChart = ({ data, spotId, spotsMetadata, inputScaleFactor = 1.0 }) => {
   const [hasMounted, setHasMounted] = React.useState(false);
   
   React.useEffect(() => {
@@ -38,7 +38,8 @@ const ForecastChart = ({ data, spotId, spotsMetadata }) => {
       data.swell_direction?.[i] ?? 210,
       windDir,
       windSpeed,
-      spotMeta
+      spotMeta,
+      inputScaleFactor
     );
     const sSurf = calculateSurfHeight(
       data.secondary_swell_height?.[i] ?? 0,
@@ -46,7 +47,8 @@ const ForecastChart = ({ data, spotId, spotsMetadata }) => {
       data.secondary_swell_direction?.[i] ?? 240,
       windDir,
       windSpeed,
-      spotMeta
+      spotMeta,
+      inputScaleFactor
     );
 
     const surfHeight = Math.max(pSurf.max, sSurf.max);

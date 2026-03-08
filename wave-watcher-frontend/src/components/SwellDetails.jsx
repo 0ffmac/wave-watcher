@@ -14,6 +14,8 @@ import NearbySpots from "./NearbySpots";
 const SwellDetails = ({
   swells,
   wind,
+  hourly,
+  currentIdx = 0,
   temperatures,
   tide,
   tideForecast,
@@ -70,6 +72,23 @@ const SwellDetails = ({
   };
 
   const tidePath = getTidePath();
+
+  // Prefer the hourly value at current index for consistency with the table.
+  // Fall back to data.current.wind.speed if hourly is unavailable.
+  const displayWindSpeed =
+    (hourly?.wind_speed?.[currentIdx] != null)
+      ? hourly.wind_speed[currentIdx]
+      : (wind?.speed ?? 0);
+
+  const displayWindDir =
+    (hourly?.wind_direction?.[currentIdx] != null)
+      ? hourly.wind_direction[currentIdx]
+      : (wind?.direction ?? 0);
+
+  const displayWindGusts =
+    (hourly?.wind_gusts?.[currentIdx] != null)
+      ? hourly.wind_gusts[currentIdx]
+      : (wind?.gusts ?? displayWindSpeed);
 
   return (
     <div className="container mx-auto px-6 py-8 space-y-4">
@@ -200,14 +219,14 @@ const SwellDetails = ({
               </span>
               <div className="mt-3">
                 <h3 className="text-xl font-black text-slate-800 tracking-tighter">
-                  {wind.speed.toFixed(0)}
+                  {displayWindSpeed.toFixed(0)}
                   <span className="text-xs font-bold text-slate-400 ml-0.5">
                     kph
                   </span>{" "}
-                  {wind.compass}
+                  {getCompass(displayWindDir)}
                 </h3>
                 <p className="text-[10px] font-bold text-slate-500 mt-1">
-                  {wind.gusts?.toFixed(0) || wind.speed.toFixed(0)}kph gusts,{" "}
+                  {displayWindGusts.toFixed(0)}kph gusts,{" "}
                   {wind.texture}
                 </p>
               </div>
@@ -240,7 +259,7 @@ const SwellDetails = ({
               {/* Center Arrow */}
               <div
                 className="absolute inset-0 flex items-center justify-center transition-transform duration-1000"
-                style={{ transform: `rotate(${wind.direction + 180}deg)` }}
+                style={{ transform: `rotate(${displayWindDir + 180}deg)` }}
               >
                 <div className="w-10 h-10 flex items-center justify-center">
                   <div className="w-0.5 h-12 bg-gradient-to-t from-white to-transparent absolute bottom-1/2 rounded-full" />
