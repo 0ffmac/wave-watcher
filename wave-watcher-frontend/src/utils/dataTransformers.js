@@ -45,6 +45,13 @@ export const transformForecastData = (data, activeSpotId) => {
   const lat = spotData.lat || 0;
   const lon = spotData.lon || 0;
 
+  // 1. Calculate Current Time Index Early
+  // Improved Logic: We find the index of the hour that is NOT in the future.
+  // This picks the 12:00 PM row when the time is 12:04 PM.
+  const now = new Date();
+  let currentIdx = data?.hourly?.times?.findLastIndex(t => new Date(t) <= now);
+  if (currentIdx === -1) currentIdx = 0; // Fallback to first row if all are future
+
   // ── Scale Factor Resolution ────────────────────────────────────────────────
   // inputScaleFactor: regional Open-Meteo model bias correction (from backend)
   // spotScaleFactor:  per-spot physical tuning (canyon, shelf, etc.)
@@ -55,100 +62,101 @@ export const transformForecastData = (data, activeSpotId) => {
   const energyMultiplier = data?.meta?.energyMultiplier ?? 14;
 
   // ── Surgical Regional Sync ──────────────────────────────────────────────────
-  // France (fr_) spots have unreliable current telemetry. Force hourly[0] sync.
-  const needsHourlySync = activeSpotId?.startsWith('fr_');
+  // GENERAL FIX: We now consistently prefer the hourly forecast sync for the Header
+  // and Swell/Wind Cards to ensure they are 100% aligned with the Forecast Table.
+  // We only use 'current' telemetry if hourly data is missing.
+  const useHourlyForCurrent = true;
 
   // Dynamic Surf Range Calculation
-  const currentSwell = needsHourlySync
+  // We use the hourly forecast at currentIdx to ensure the header matches the table exactly.
+  const pSwellSource = (useHourlyForCurrent || !data?.current)
     ? {
-        height:    data?.hourly?.swell_height?.[0]    || 0,
-        period:    data?.hourly?.swell_period?.[0]    || 0,
-        direction: data?.hourly?.swell_direction?.[0] || 0,
+        height:    data?.hourly?.swell_height?.[currentIdx]    || 0,
+        period:    data?.hourly?.swell_period?.[currentIdx]    || 0,
+        direction: data?.hourly?.swell_direction?.[currentIdx] || 0,
       }
-    : (data?.current?.swells?.[0] || {
-        height: 0,
-        period: 0,
-        direction: 0,
-      });
+    : (data?.current?.swells?.[0] || { height: 0, period: 0, direction: 0 });
 
-  const wind = needsHourlySync
+  const sSwellSource = (useHourlyForCurrent || !data?.current)
     ? {
-        speed:     data?.hourly?.wind_speed?.[0]     || 0,
-        direction: data?.hourly?.wind_direction?.[0] || 0,
-        gusts:     data?.hourly?.wind_gusts?.[0]     || 0,
-        compass:   "N/A", // Will be resolved by SwellDetails
+        height:    data?.hourly?.secondary_swell_height?.[currentIdx]    || 0,
+        period:    data?.hourly?.secondary_swell_period?.[currentIdx]    || 0,
+        direction: data?.hourly?.secondary_swell_direction?.[currentIdx] || 0,
+      }
+    : (data?.current?.swells?.[1] || { height: 0, period: 0, direction: 0 });
+
+  const currentWind = (useHourlyForCurrent || !data?.current)
+    ? {
+        speed:     data?.hourly?.wind_speed?.[currentIdx]     || 0,
+        direction: data?.hourly?.wind_direction?.[currentIdx] || 0,
+        gusts:     data?.hourly?.wind_gusts?.[currentIdx]     || 0,
         texture:   "N/A",
       }
-    : (data?.current?.wind || {
-        speed: 0,
-        direction: 0,
-        compass: "N/A",
-        texture: "N/A",
-      });
+    : (data?.current?.wind || { speed: 0, direction: 0, texture: "N/A" });
 
+  // 1. Header Surf Height: We use ONLY the primary swell here to match the 
+  // Surfline-aligned heights the user prefers (e.g. 1.0-1.3m for Mandiri).
   const calculatedSurf = calculateSurfHeight(
-    currentSwell.height,
-    currentSwell.period,
-    currentSwell.direction,
-    wind.direction,
-    wind.speed,
+    pSwellSource.height,
+    pSwellSource.period,
+    pSwellSource.direction,
+    currentWind.direction,
+    currentWind.speed,
     spotData,
     finalScaleFactor
   );
 
   const surfRange = `${calculatedSurf.min.toFixed(1)}–${calculatedSurf.max.toFixed(1)}m`;
-  const rating = calculateConditionRating(
-    calculatedSurf.max,
-    wind.speed,
-    calculatedSurf.windFactor,
-    calculatedSurf.directionalFactor,
-    spotData.breakType
-  );
 
-  const swellsSource = needsHourlySync
-    ? [
-        {
-          height:    data?.hourly?.swell_height?.[0]    || 0,
-          period:    data?.hourly?.swell_period?.[0]    || 0,
-          direction: data?.hourly?.swell_direction?.[0] || 0,
-        },
-        {
-          height:    data?.hourly?.secondary_swell_height?.[0]    || 0,
-          period:    data?.hourly?.secondary_swell_period?.[0]    || 0,
-          direction: data?.hourly?.secondary_swell_direction?.[0] || 0,
-        },
-      ]
-    : (data?.current?.swells || []);
+  // 2. Condition Rating: We still use the 'dominant' swell approach from the table 
+  // to ensure the quality rating (Fair/Good/Epic) is accurate.
+  const pSurfRating = calculatedSurf; // already calculated above
+  const sSurfRating = (sSwellSource.period >= 7) // MIN_SURF_PERIOD
+    ? calculateSurfHeight(
+        sSwellSource.height,
+        sSwellSource.period,
+        sSwellSource.direction,
+        currentWind.direction,
+        currentWind.speed,
+        spotData,
+        finalScaleFactor
+      )
+    : { min: 0, max: 0, windFactor: 1.0, directionalFactor: 1.0 };
+
+  const dominant = pSurfRating.max >= sSurfRating.max ? pSurfRating : sSurfRating;
+  const ratingSurfMax = Math.max(pSurfRating.max, sSurfRating.max);
+  
+  const rating = calculateConditionRating(
+    ratingSurfMax,
+    currentWind.speed,
+    dominant.windFactor,
+    dominant.directionalFactor,
+    spotData.breakType,
+    ratingSurfMax
+  );
 
   const mapSwells = [
     {
-      height: parseFloat(
-        ((swellsSource?.[0]?.height ?? data?.hourly?.swell_height?.[0] ?? 0) * finalScaleFactor).toFixed(2)
-      ),
-      period: swellsSource?.[0]?.period ?? data?.hourly?.swell_period?.[0] ?? 0,
-      direction: swellsSource?.[0]?.direction ?? data?.hourly?.swell_direction?.[0] ?? 0,
+      height: parseFloat((pSwellSource.height * finalScaleFactor).toFixed(2)),
+      period: Math.round(pSwellSource.period),
+      direction: pSwellSource.direction,
     },
     {
-      height: parseFloat(
-        ((swellsSource?.[1]?.height ?? data?.hourly?.secondary_swell_height?.[0] ?? 0) * finalScaleFactor).toFixed(2)
-      ),
-      period: swellsSource?.[1]?.period ?? data?.hourly?.secondary_swell_period?.[0] ?? 0,
-      direction: swellsSource?.[1]?.direction ?? data?.hourly?.secondary_swell_direction?.[0] ?? 0,
+      height: parseFloat((sSwellSource.height * finalScaleFactor).toFixed(2)),
+      period: Math.round(sSwellSource.period),
+      direction: sSwellSource.direction,
     },
   ];
 
-  const now = new Date();
-  const currentIdx = data?.hourly?.times?.findIndex(t => new Date(t) >= now) ?? 0;
-
   const temperatures = data?.current?.temperatures || (data?.hourly?.temperature && data?.hourly?.sea_surface_temperature
     ? {
-        air: data.hourly.temperature[0] || 0,
-        water: data.hourly.sea_surface_temperature[0] || 0,
+        air: data.hourly.temperature[currentIdx] || 0,
+        water: data.hourly.sea_surface_temperature[currentIdx] || 0,
       }
     : undefined);
 
   const tide = data?.current?.tide || (data?.hourly?.sea_level_height_msl
-    ? data.hourly.sea_level_height_msl[0]
+    ? data.hourly.sea_level_height_msl[currentIdx]
     : undefined);
 
   const hourly = {
@@ -177,7 +185,7 @@ export const transformForecastData = (data, activeSpotId) => {
     surfRange,
     rating,
     mapSwells,
-    wind,
+    wind: currentWind,
     temperatures,
     tide,
     hourly,

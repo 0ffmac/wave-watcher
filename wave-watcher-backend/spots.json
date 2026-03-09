@@ -1,0 +1,420 @@
+{
+  "ujung_bocur": {
+    "name": "Ujung Bocur",
+    "lat": -5.3048,
+    "lon": 103.9919,
+    "timezone": "Asia/Jakarta",
+    "region": "indonesia_sumatra",
+    "ideal_swell": [190, 220],
+    "offshore_wind": [80, 160],
+    "onshore_wind": [200, 20]
+  },
+  "mandiri_beach": {
+    "name": "Mandiri Beach",
+    "lat": -5.2472,
+    "lon": 103.9234,
+    "timezone": "Asia/Jakarta",
+    "region": "indonesia_sumatra",
+    "ideal_swell": [200, 230],
+    "offshore_wind": [40, 120],
+    "onshore_wind": [180, 30]
+  },
+  "krui_left": {
+    "name": "Krui Left",
+    "lat": -5.1928,
+    "lon": 103.929,
+    "timezone": "Asia/Jakarta",
+    "region": "indonesia_sumatra",
+    "ideal_swell": [180, 210],
+    "offshore_wind": [50, 130],
+    "onshore_wind": [190, 40]
+  },
+  "jennys_right": {
+    "name": "Jenny's Right",
+    "lat": -5.0383,
+    "lon": 103.7666,
+    "timezone": "Asia/Jakarta",
+    "region": "indonesia_sumatra",
+    "ideal_swell": [180, 225],
+    "offshore_wind": [270, 360],
+    "onshore_wind": [90, 180]
+  },
+  "krui_right": {
+    "name": "Krui Right",
+    "lat": -5.178,
+    "lon": 103.888,
+    "timezone": "Asia/Jakarta",
+    "region": "indonesia_sumatra",
+    "ideal_swell": [200, 240],
+    "offshore_wind": [60, 150],
+    "onshore_wind": [240, 330]
+  },
+  "way_jambu": {
+    "name": "Way Jambu",
+    "lat": -5.3491,
+    "lon": 104.0302,
+    "timezone": "Asia/Jakarta",
+    "region": "indonesia_sumatra",
+    "ideal_swell": [190, 230],
+    "offshore_wind": [30, 120],
+    "onshore_wind": [210, 300]
+  },
+  "ujung_walur": {
+    "name": "Ujung Walur",
+    "lat": -5.216,
+    "lon": 103.908,
+    "timezone": "Asia/Jakarta",
+    "region": "indonesia_sumatra",
+    "ideal_swell": [190, 230],
+    "offshore_wind": [50, 140],
+    "onshore_wind": [230, 320]
+  },
+  "uluwatu": {
+    "name": "Uluwatu",
+    "lat": -8.8149,
+    "lon": 115.0884,
+    "timezone": "Asia/Makassar",
+    "region": "indonesia_bali",
+    "ideal_swell": [180, 225],
+    "offshore_wind": [90, 150],
+    "onshore_wind": [270, 330]
+  },
+  "ulu_the_peak": {
+    "name": "Uluwatu: The Peak",
+    "lat": -8.8149,
+    "lon": 115.0884,
+    "timezone": "Asia/Makassar",
+    "region": "indonesia_bali",
+    "ideal_swell": [180, 225],
+    "offshore_wind": [90, 150],
+    "onshore_wind": [270, 330]
+  },
+  "ulu_racetracks": {
+    "name": "Uluwatu: Racetracks",
+    "lat": -8.8155,
+    "lon": 115.0875,
+    "timezone": "Asia/Makassar",
+    "region": "indonesia_bali",
+    "ideal_swell": [190, 230],
+    "offshore_wind": [90, 150],
+    "onshore_wind": [270, 330]
+  },
+  "ulu_outside_corner": {
+    "name": "Uluwatu: Outside Corner",
+    "lat": -8.814,
+    "lon": 115.085,
+    "timezone": "Asia/Makassar",
+    "region": "indonesia_bali",
+    "ideal_swell": [180, 225],
+    "offshore_wind": [90, 150],
+    "onshore_wind": [270, 330]
+  },
+  "ulu_temples": {
+    "name": "Uluwatu: Temples",
+    "lat": -8.82,
+    "lon": 115.089,
+    "timezone": "Asia/Makassar",
+    "region": "indonesia_bali",
+    "ideal_swell": [180, 220],
+    "offshore_wind": [90, 150],
+    "onshore_wind": [270, 330]
+  },
+  "ulu_the_bombie": {
+    "name": "Uluwatu: The Bombie",
+    "lat": -8.812,
+    "lon": 115.082,
+    "timezone": "Asia/Makassar",
+    "region": "indonesia_bali",
+    "ideal_swell": [180, 225],
+    "offshore_wind": [90, 150],
+    "onshore_wind": [270, 330]
+  },
+  "balangan": {
+    "name": "Balangan",
+    "lat": -8.792,
+    "lon": 115.1235,
+    "timezone": "Asia/Makassar",
+    "region": "indonesia_bali",
+    "ideal_swell": [190, 240],
+    "offshore_wind": [100, 160],
+    "onshore_wind": [280, 340]
+  },
+  "padang_padang": {
+    "name": "Padang Padang",
+    "lat": -8.8112,
+    "lon": 115.1037,
+    "timezone": "Asia/Makassar",
+    "region": "indonesia_bali",
+    "ideal_swell": [190, 220],
+    "offshore_wind": [90, 150],
+    "onshore_wind": [270, 330]
+  },
+  "impossibles": {
+    "name": "Impossibles",
+    "lat": -8.8085,
+    "lon": 115.109,
+    "timezone": "Asia/Makassar",
+    "region": "indonesia_bali",
+    "ideal_swell": [190, 230],
+    "offshore_wind": [90, 150],
+    "onshore_wind": [270, 330]
+  },
+  "bingin": {
+    "name": "Bingin",
+    "lat": -8.8055,
+    "lon": 115.113,
+    "timezone": "Asia/Makassar",
+    "region": "indonesia_bali",
+    "ideal_swell": [190, 230],
+    "offshore_wind": [90, 150],
+    "onshore_wind": [270, 330]
+  },
+  "nusa_dua": {
+    "name": "Nusa Dua",
+    "lat": -8.808,
+    "lon": 115.235,
+    "timezone": "Asia/Makassar",
+    "region": "indonesia_bali",
+    "ideal_swell": [160, 210],
+    "offshore_wind": [240, 320],
+    "onshore_wind": [60, 140]
+  },
+  "melasti": {
+    "name": "Melasti Beach",
+    "lat": -8.8481,
+    "lon": 115.1592,
+    "timezone": "Asia/Makassar",
+    "region": "indonesia_bali",
+    "ideal_swell": [180, 210],
+    "offshore_wind": [340, 40],
+    "onshore_wind": [160, 220]
+  },
+  "green_bowl": {
+    "name": "Green Bowl",
+    "lat": -8.8488,
+    "lon": 115.1711,
+    "timezone": "Asia/Makassar",
+    "region": "indonesia_bali",
+    "ideal_swell": [170, 200],
+    "offshore_wind": [330, 30],
+    "onshore_wind": [150, 210]
+  },
+  "pandawa": {
+    "name": "Pandawa Beach",
+    "lat": -8.8453,
+    "lon": 115.1864,
+    "timezone": "Asia/Makassar",
+    "region": "indonesia_bali",
+    "ideal_swell": [160, 200],
+    "offshore_wind": [330, 30],
+    "onshore_wind": [150, 210]
+  },
+  "gunung_payung": {
+    "name": "Gunung Payung",
+    "lat": -8.8425,
+    "lon": 115.2015,
+    "timezone": "Asia/Makassar",
+    "region": "indonesia_bali",
+    "ideal_swell": [170, 210],
+    "offshore_wind": [330, 30],
+    "onshore_wind": [150, 210]
+  },
+  "fr_la_graviere": {
+    "name": "La Gravière",
+    "group": "Hossegor, France",
+    "lat": 43.6655,
+    "lon": -1.4442,
+    "timezone": "Europe/Paris",
+    "region": "france_hossegor",
+    "ideal_swell": [270, 310],
+    "offshore_wind": [45, 135],
+    "desc": "World-class heavy barrels. Expert only. Best on incoming mid-tide."
+  },
+  "fr_la_nord": {
+    "name": "La Nord",
+    "group": "Hossegor, France",
+    "lat": 43.667,
+    "lon": -1.446,
+    "timezone": "Europe/Paris",
+    "region": "france_hossegor",
+    "ideal_swell": [280, 320],
+    "offshore_wind": [45, 135],
+    "desc": "Big wave spot. Handles 15ft+. Needs a big board and serious experience."
+  },
+  "fr_la_sud": {
+    "name": "La Sud",
+    "group": "Hossegor, France",
+    "lat": 43.66,
+    "lon": -1.443,
+    "timezone": "Europe/Paris",
+    "region": "france_hossegor",
+    "ideal_swell": [270, 300],
+    "offshore_wind": [45, 135],
+    "desc": "Beginner friendly. Sheltered from big NW swells by the jetty."
+  },
+  "fr_la_piste": {
+    "name": "La Piste",
+    "group": "Capbreton, France",
+    "lat": 43.6515,
+    "lon": -1.4458,
+    "timezone": "Europe/Paris",
+    "region": "france_hossegor",
+    "ideal_swell": [270, 310],
+    "offshore_wind": [45, 135],
+    "desc": "Powerful, hollow beach break. Handles size well and known for heavy tubes."
+  },
+  "fr_santocha": {
+    "name": "Santocha",
+    "group": "Capbreton, France",
+    "lat": 43.6552,
+    "lon": -1.4462,
+    "timezone": "Europe/Paris",
+    "region": "france_hossegor",
+    "ideal_swell": [260, 300],
+    "offshore_wind": [45, 135],
+    "desc": "Rock-bottomed peaks. Very consistent and holds its shape during bigger swells."
+  },
+  "us_jax_pier": {
+    "name": "Jax Beach Pier",
+    "group": "North Florida",
+    "lat": 30.2915,
+    "lon": -81.3885,
+    "timezone": "America/New_York",
+    "region": "usa_florida",
+    "ideal_swell": [45, 135],
+    "offshore_wind": [240, 300],
+    "desc": "Most consistent in North FL. Best on NE wind swells or Hurricane swells."
+  },
+  "us_st_augustine": {
+    "name": "St. Augustine Beach",
+    "group": "North Florida",
+    "lat": 29.8575,
+    "lon": -81.2655,
+    "timezone": "America/New_York",
+    "region": "usa_florida",
+    "ideal_swell": [70, 120],
+    "offshore_wind": [250, 290],
+    "desc": "Fun, shifty peaks. Works best on a mid-tide."
+  },
+  "us_new_smyrna": {
+    "name": "New Smyrna Beach",
+    "group": "Central Florida",
+    "lat": 29.0258,
+    "lon": -80.927,
+    "timezone": "America/New_York",
+    "region": "usa_florida",
+    "ideal_swell": [45, 110],
+    "offshore_wind": [240, 300],
+    "desc": "The wave magnet. Super consistent, punchy peaks. High shark activity."
+  },
+  "us_cocoa_beach": {
+    "name": "Cocoa Beach Pier",
+    "group": "Central Florida",
+    "lat": 28.3675,
+    "lon": -80.6078,
+    "timezone": "America/New_York",
+    "region": "usa_florida",
+    "ideal_swell": [60, 120],
+    "offshore_wind": [250, 290],
+    "desc": "Longboard paradise. Very mellow and beginner-friendly."
+  },
+  "us_sebastian_inlet": {
+    "name": "Sebastian Inlet",
+    "group": "Central Florida",
+    "lat": 27.8606,
+    "lon": -80.4475,
+    "timezone": "America/New_York",
+    "region": "usa_florida",
+    "ideal_swell": [45, 90],
+    "offshore_wind": [240, 280],
+    "desc": "High-performance wedge. Famous for 'First Peak'. Best on low to mid tide."
+  },
+  "us_reef_road": {
+    "name": "Reef Road",
+    "group": "South Florida",
+    "lat": 26.782,
+    "lon": -80.034,
+    "timezone": "America/New_York",
+    "region": "usa_florida",
+    "ideal_swell": [10, 45],
+    "offshore_wind": [240, 300],
+    "desc": "The only spot that handles massive North swells. Can hold double overhead+."
+  },
+  "us_venice_jetty": {
+    "name": "Venice Jetty",
+    "group": "Gulf Coast",
+    "lat": 27.1106,
+    "lon": -82.4673,
+    "timezone": "America/New_York",
+    "region": "usa_florida",
+    "ideal_swell": [220, 310],
+    "offshore_wind": [45, 135],
+    "desc": "Best spot on the West Coast. Works on strong Cold Fronts or Tropical swells."
+  },
+  "us_pensacola_pier": {
+    "name": "Pensacola Beach Pier",
+    "group": "Gulf Coast",
+    "lat": 30.332,
+    "lon": -87.141,
+    "timezone": "America/Chicago",
+    "region": "usa_florida",
+    "ideal_swell": [160, 220],
+    "offshore_wind": [0, 45],
+    "desc": "Emerald Coast classic. Best on solid South wind-swells with North offshore winds."
+  },
+  "us_pcb_pier": {
+    "name": "Panama City Beach Pier",
+    "group": "Gulf Coast",
+    "lat": 30.213,
+    "lon": -85.878,
+    "timezone": "America/New_York",
+    "region": "usa_florida",
+    "ideal_swell": [180, 240],
+    "offshore_wind": [0, 45],
+    "desc": "Reliable sandbars around the pier. Needs heavy frontal systems to really fire."
+  },
+  "us_obx_rodanthe": {
+    "name": "Rodanthe (S-Turns)",
+    "group": "Outer Banks",
+    "lat": 35.6028,
+    "lon": -75.465,
+    "timezone": "America/New_York",
+    "region": "usa_north_carolina",
+    "ideal_swell": [30, 150],
+    "offshore_wind": [240, 310],
+    "desc": "High-energy beach break. Powerful barrels that handle size. Best on mid-period NE swells."
+  },
+  "us_obx_lighthouse": {
+    "name": "Cape Hatteras Lighthouse",
+    "group": "Outer Banks",
+    "lat": 35.2514,
+    "lon": -75.5292,
+    "timezone": "America/New_York",
+    "region": "usa_north_carolina",
+    "ideal_swell": [45, 180],
+    "offshore_wind": [270, 340],
+    "desc": "The East Coast's premier wave magnet. Can produce world-class heavy conditions."
+  },
+  "us_wrightsville": {
+    "name": "Wrightsville Beach",
+    "group": "Southern NC",
+    "lat": 34.2091,
+    "lon": -77.7947,
+    "timezone": "America/New_York",
+    "region": "usa_north_carolina",
+    "ideal_swell": [100, 170],
+    "offshore_wind": [290, 340],
+    "desc": "Clean peaks, usually smaller and softer than the Outer Banks."
+  },
+  "us_obx_cape_point": {
+    "name": "Cape Point",
+    "group": "Outer Banks",
+    "lat": 35.2178,
+    "lon": -75.532,
+    "timezone": "America/New_York",
+    "region": "usa_north_carolina",
+    "ideal_swell": [20, 190],
+    "offshore_wind": [270, 45],
+    "desc": "The 'elbow' of the coast. Shifting sandbars and colliding currents. Can handle almost any swell direction."
+  }
+}

@@ -127,7 +127,8 @@ const ForecastTable = ({
       windSpeed,
       dominant.windFactor,
       dominant.directionalFactor,
-      spotMeta?.breakType // ADDED
+      spotMeta?.breakType,
+      surfMax
     );
     const getRatingColor = (r) => {
       if (r === "EPIC") return "bg-purple-500";
@@ -182,9 +183,10 @@ const ForecastTable = ({
           ? day.allHours
           : day.allHours.filter((h) => intervals.includes(h.hour));
 
-        // Filter out past hours for today
+        // Filter out past hours for today (Allow current hour even if slightly past)
         if (day.isToday) {
-          displayRows = displayRows.filter((h) => h.timestamp >= now);
+          const buffer = 60 * 60 * 1000; // 60 minutes buffer
+          displayRows = displayRows.filter((h) => h.timestamp.getTime() + buffer >= now.getTime());
         }
 
         // If it's today and all hours are past, don't show the day at all

@@ -1,0 +1,11 @@
+name = "surf-forecast-api"
+main = "src/entry.py"
+compatibility_date = "2026-02-28"
+compatibility_flags = ["python_workers"]
+
+[vars]
+# SPOTS_CONFIG moved to KV SURF_CACHE
+
+[[kv_namespaces]]
+binding = "SURF_CACHE"
+id = "51e3b8c9784e4be0a503032848f18241"

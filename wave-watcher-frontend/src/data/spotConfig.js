@@ -22,7 +22,7 @@ export const SPOT_CONFIG = {
             optimalSwellDir: 205,
             facingDir: 205,
             breakType: "reef",
-            spotScaleFactor: 1.0,
+            spotScaleFactor: 0.75,
             offshore_wind: [80, 160],
             onshore_wind: [200, 20],
           },
@@ -35,7 +35,7 @@ export const SPOT_CONFIG = {
             swellWindow: [170, 250], // Widen for S swells
             optimalSwellDir: 215,
             facingDir: 215,
-            breakType: "beach",
+            breakType: "heavy_beach",
             spotScaleFactor: 1.0,
             offshore_wind: [40, 120],
             onshore_wind: [180, 30],
@@ -358,6 +358,63 @@ export const SPOT_CONFIG = {
   usa: {
     name: "USA",
     regions: {
+      north_carolina: {
+        name: "North Carolina",
+        spots: {
+          us_obx_cape_point: {
+            name: "Cape Point",
+            lat: 35.2178,
+            lon: -75.532,
+            location: "Buxton, NC",
+            region: "usa_north_carolina",
+            swellWindow: [20, 200],
+            optimalSwellDir: 120,
+            facingDir: 120,
+            breakType: "heavy_beach",
+            spotScaleFactor: 1.1, // Small boost because the currents often "trap" swell energy here
+            offshore_wind: [315, 45], // NW to NE is often magic here
+          },
+          us_obx_rodanthe: {
+            name: "Rodanthe (S-Turns)",
+            lat: 35.6028,
+            lon: -75.465,
+            location: "Outer Banks, NC",
+            region: "usa_north_carolina",
+            swellWindow: [20, 160],
+            optimalSwellDir: 65,
+            facingDir: 65,
+            breakType: "heavy_beach", // <--- This triggers the 1.4x multiplier
+            spotScaleFactor: 1.0, // Keep at 1.0 to let heavy_beach do the work
+            offshore_wind: [240, 310],
+          },
+          us_obx_lighthouse: {
+            name: "Hatteras Lighthouse",
+            lat: 35.2514,
+            lon: -75.5292,
+            location: "Buxton, NC",
+            region: "usa_north_carolina",
+            swellWindow: [40, 190],
+            optimalSwellDir: 110,
+            facingDir: 110,
+            breakType: "heavy_beach", // <--- Triggers heavy beach physics
+            spotScaleFactor: 1.0,
+            offshore_wind: [270, 340],
+          },
+          us_wrightsville: {
+            name: "Wrightsville Beach",
+            lat: 34.2091,
+            lon: -77.7947,
+            location: "Wilmington, NC",
+            region: "usa_north_carolina",
+            swellWindow: [90, 180],
+            optimalSwellDir: 145,
+            facingDir: 145,
+            breakType: "beach", // Standard beach break (1.0x)
+            spotScaleFactor: 0.9, // Slightly dampened due to shelf
+            offshore_wind: [290, 340],
+          },
+        },
+      },
       florida_north: {
         name: "Northern Florida",
         spots: {

@@ -1,0 +1,30 @@
+# --- General / OS ---
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+*.log
+*.backup
+
+# --- Python & Backend (Cloudflare/UV) ---
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+.env
+.dev.vars
+.pytest_cache/
+uv.lock
+.wrangler/
+requirements.txt.gen
+wrangler.jsonc.backup
+
+# --- Frontend (React/Next.js/Node) ---
+node_modules/
+dist/
+build/
+.next/
+.eslintcache
+.stylelintcache

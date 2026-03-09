@@ -151,7 +151,8 @@ export const calculateConditionRating = (
   windSpeed,
   windFactor,
   directionalFactor,
-  breakType = "beach" // ADDED: to differentiate spot sensitivity
+  breakType = "beach",
+  surfHeightMax = 0
 ) => {
   if (maxSurf < 0.2) return "FLAT";
   if (windSpeed > 45) return "BLOWN OUT";
@@ -202,10 +203,37 @@ export const calculateConditionRating = (
   else if (directionalFactor < 0.4) score -= 2;
 
   // 4. FINAL RATING
-  if (score >= 10) return "EPIC";
-  if (score >= 7) return "GOOD";
-  if (score >= 4) return "FAIR";
-  return "POOR";
+  let calculatedRating = "POOR";
+  if (score >= 10) calculatedRating = "EPIC";
+  else if (score >= 7) calculatedRating = "GOOD";
+  else if (score >= 4) calculatedRating = "FAIR";
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // SIZE THRESHOLD GUARDS
+  // A rating cannot exceed what the wave size physically allows.
+  // surfHeightMax is the calculated face height in metres (post-scale).
+  // These thresholds align with Surfline's LOTUS rating caps:
+  //   < 0.5m  → always FLAT regardless of wind / direction quality
+  //   < 0.9m  → maximum FAIR  (knee–waist high, fun but not impressive)
+  //   < 1.4m  → maximum GOOD  (chest–overhead, solid but not epic)
+  //   ≥ 1.4m  → EPIC allowed if wind and direction quality justify it
+  // ─────────────────────────────────────────────────────────────────────────
+  let finalRating = calculatedRating;
+
+  if (surfHeightMax < 0.5) {
+    finalRating = 'FLAT';
+  } else if (surfHeightMax < 0.9) {
+    if (finalRating === 'EPIC' || finalRating === 'GOOD') {
+      finalRating = 'FAIR';
+    }
+  } else if (surfHeightMax < 1.4) {
+    if (finalRating === 'EPIC') {
+      finalRating = 'GOOD';
+    }
+  }
+  // ≥ 1.4m: no cap — EPIC is allowed if the rest of the score earned it
+
+  return finalRating;
 };
 
 export const calculateEnergy = (height, period, energyMultiplier = 14) => {
