@@ -2,6 +2,7 @@ import React from "react";
 import HeroSection from "../components/HeroSection";
 import SwellDetails from "../components/SwellDetails";
 import ForecastChart from "../components/ForecastChart";
+import TideChart from "../components/TideChart";
 import ForecastTable from "../components/ForecastTable";
 import SpotMap from "../components/SpotMap";
 
@@ -99,6 +100,15 @@ const Dashboard = ({
         spotId={activeSpotId}
         spotsMetadata={SPOTS}
         inputScaleFactor={finalScaleFactor ?? 1.0}
+        currentIdx={currentIdx ?? 0}
+      />
+
+      <TideChart
+        tideForecast={data?.hourly?.sea_level_height_msl}
+        times={data?.hourly?.times}
+        lat={lat}
+        spotName={spotName}
+        currentIdx={currentIdx ?? 0}
       />
     </div>
   );
