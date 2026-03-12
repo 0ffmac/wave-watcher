@@ -72,12 +72,12 @@ const Navbar = ({
             >
               Reports
             </Link>
-            <a
-              href="#"
+            <Link
+              to="/info"
               className="text-white hover:text-blue-400 transition-colors drop-shadow-[0_2_px_2px_rgba(0,0,0,0.8)]"
             >
               Info
-            </a>
+            </Link>
             <Link
               to="/map"
               className="text-white hover:text-blue-400 transition-colors drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]"

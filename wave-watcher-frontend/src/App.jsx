@@ -13,6 +13,7 @@ import { getAllSpotsFlat } from "./data/spotConfig";
 // Pages
 import Dashboard from "./pages/Dashboard";
 import MapPage from "./pages/MapPage";
+import SpotInfo from "./pages/SpotInfo";
 
 // Configuration
 const SPOTS = getAllSpotsFlat();
@@ -98,6 +99,14 @@ function App() {
                 activeRegionKey={activeRegionKey}
                 onSpotSelect={setActiveSpotId}
                 transformedData={transformedData}
+              />
+            }
+          />
+          <Route
+            path="/info"
+            element={
+              <SpotInfo
+                activeSpotId={activeSpotId}
               />
             }
           />
