@@ -286,9 +286,23 @@ class Default(WorkerPoint := WorkerEntrypoint):
 
         try:
             req_url = URL.new(request.url)
-            if not req_url.pathname.endswith("/forecast"):
+            pathname = req_url.pathname
+
+            # ── /api/location ─────────────────────────────────────────────────
+            # Cloudflare injects CF-IPCountry and CF-IPContinent on every request.
+            # No external API call needed — zero cost, zero latency, no CORS.
+            if pathname.endswith("/location"):
+                country   = request.headers.get("CF-IPCountry")   or "XX"
+                continent = request.headers.get("CF-IPContinent") or "XX"
                 return Response(
-                    json.dumps({"error": "Use /forecast"}),
+                    json.dumps({"country": country, "continent": continent}),
+                    headers=cors_headers,
+                )
+
+            # ── /api/forecast ──────────────────────────────────────────────────
+            if not pathname.endswith("/forecast"):
+                return Response(
+                    json.dumps({"error": "Use /forecast or /location"}),
                     status=404,
                     headers=cors_headers,
                 )
