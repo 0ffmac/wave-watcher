@@ -1,15 +1,9 @@
 /**
- * spotInfoData.js
- *
- * Static editorial content for the Spot Info page.
- * Keyed by spot ID matching spotConfig.js.
- *
- * TO ADD A NEW SPOT:
- * 1. Add an entry below using the same structure as ujung_bocur
- * 2. The SpotInfo page will render it automatically via the spot ID from the URL
+ * Spot info — Indonesia: Sumatra (Krui coast)
+ * Spots: ujung_bocur, mandiri_beach, krui_left, krui_right,
+ *         way_jambu, jennys_right, ujung_walur
  */
-
-export const SPOT_INFO = {
+export const INDONESIA_SUMATRA_INFO = {
   ujung_bocur: {
     // ── Identity ────────────────────────────────────────────────────────────
     name: "Ujung Bocur",
@@ -160,8 +154,6 @@ export const SPOT_INFO = {
       },
     ],
   },
-
-  // ─── Add other spots below following the same structure ──────────────────
   mandiri_beach: {
     // ── Identity ─────────────────────────────────────────────────────────────
     name: "Mandiri Beach",
@@ -684,6 +676,7 @@ export const SPOT_INFO = {
       tip: "The local who owns the land near the break will look after your vehicle while you surf — always pay for parking and treat them respectfully. They are part of what keeps this remote spot functioning for visiting surfers. Always assess the wave from land before paddling out, and never surf Way Jambu alone.",
     },
 
+    // ── Best season chart ────────────────────────────────────────────────────
     seasonChart: [
       { month: "Jan", swell: 3, wind: 2, overall: 2 },
       { month: "Feb", swell: 3, wind: 2, overall: 2 },
@@ -701,6 +694,7 @@ export const SPOT_INFO = {
     seasonNote:
       "Season mirrors Ujung Bocur — April to November with the peak in July. Long-period S and SW Indian Ocean swells combine with SE offshore trade winds for the best conditions. Because this wave requires expert-level commitment, the effective 'good' window is narrower than other Krui spots — you want 4–6ft faces with clean SE wind and mid-to-high tide all aligning simultaneously.",
 
+    // ── Gallery ──────────────────────────────────────────────────────────────
     gallery: [
       {
         url: "https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=900&q=80",
@@ -718,6 +712,221 @@ export const SPOT_INFO = {
         url: "https://images.unsplash.com/photo-1520454974749-a8beb6c37ded?w=900&q=80",
         caption: "Morning glass — the only time to be here",
       },
+    ],
+  },
+  jennys_right: {
+    name: "Jenny's Right",
+    region: "Krui, Lampung, Sumatra",
+    country: "Indonesia",
+    tagline: "An under-the-radar right-hand point break north of Krui — long, walling rides into a protected bay that rewards the surfers willing to seek it out.",
+
+    difficulty: {
+      level: 2,
+      label: "Intermediate / All Levels",
+      note: "A forgiving, long-walled right that suits all levels on most days. Can get powerful on large SW swells but rarely becomes consequential. Good option for intermediates looking to progress on reef.",
+    },
+
+    heroImage: "jennys-right.jpg",
+
+    stats: [
+      { label: "Break Type",   value: "Reef / Point Break"     },
+      { label: "Wave Type",    value: "Right-hander"           },
+      { label: "Best Swell",   value: "SW – S"                 },
+      { label: "Swell Size",   value: "Chest – Overhead"       },
+      { label: "Best Wind",    value: "NE – E Offshore"        },
+      { label: "Best Tide",    value: "Mid tide"               },
+      { label: "Crowd Factor", value: "Very Low"               },
+      { label: "Fun Factor",   value: "8 / 10"                 },
+    ],
+
+    story: {
+      heading: "Krui's Secret Right",
+      body: [
+        "North of the main cluster of Krui surf spots, where the coastal road cuts through dense jungle before reaching a sheltered bay, Jenny's Right breaks over a reef ledge in conditions that are almost always quieter and less crowded than the headland breaks to the south.",
+        "The wave is a right-hander — rare in a region dominated by lefts — and it offers long, connecting walls that run across the reef and into the protected bay. On a solid SW swell the sets line up with satisfying regularity, each wave offering 60–100 metres of wall to work through. The wave suits surfers who want to build rail game and flow rather than chase barrels.",
+        "Few travelling surfers make it this far north on the Krui coast, which keeps the lineup almost permanently uncrowded. Local fishermen pass through the channel at dawn. The bay itself is beautiful — jungle down to the waterline, shallow turquoise water over the reef, and the kind of quiet that is increasingly hard to find anywhere in Indonesian surf travel.",
+      ],
+    },
+
+    technical: [
+      {
+        title:   "Swell & Direction",
+        icon:    "🌊",
+        content: "Needs a SW to S swell to properly activate. The bay's orientation means straight W swells wrap less effectively and can produce a mushy, less defined wave. The prime direction is SSW — the wave lines up cleanly and provides the longest connecting walls. Does not handle size as well as the Tanjung Setia reef breaks — above 6ft it closes out more readily.",
+      },
+      {
+        title:   "Right-Hander Advantage",
+        icon:    "🌊",
+        content: "Being a right in a left-dominated coast means goofy-footers get their turn in the barrel — but regular-footers will find open backhand walls that are equally enjoyable for carving. The wave bends toward the bay as it runs, naturally pulling in toward the beach and making the paddle back straightforward.",
+      },
+      {
+        title:   "Wind & Session Timing",
+        icon:    "💨",
+        content: "Offshore in the NE–E land breeze that characterises the dry season mornings on this coast. Sessions from first light to 10–11am before the afternoon sea breeze makes it onshore. The sheltered bay location means it holds its shape longer than exposed breaks when the wind picks up.",
+      },
+      {
+        title:   "Reef Entry",
+        icon:    "🏄",
+        content: "A sandy channel at the south end of the bay provides a clean entry and exit. Paddle along the inside edge of the reef to reach the takeoff zone. The reef itself is not as shallow or sharp as the Tanjung Setia reefs, making it a more forgiving introduction to Indonesian reef break surfing.",
+      },
+    ],
+
+    hazards: [
+      {
+        level:  "medium",
+        title:  "Shallow Inside Reef Section",
+        detail: "The final 30 metres of the wave's run passes over a shallower section of reef. At lower tides this section can be too shallow to safely ride out. Know where to kick out before reaching it and return via the sandy channel.",
+      },
+      {
+        level:  "medium",
+        title:  "Remote Access",
+        detail: "Jenny's Right is north of the main Krui cluster. The access road is unsealed and requires a scooter or 4WD. There are no facilities at the break itself — bring water, food, and a first aid kit. The nearest town with any medical facility is Krui, approximately 30 minutes south.",
+      },
+      {
+        level:  "low",
+        title:  "Boat Traffic",
+        detail: "Small fishing boats use the bay channel year-round. Visibility from the boats is limited. Keep clear of the channel itself and stay within the reef zone.",
+      },
+    ],
+
+    access: {
+      overview: "Jenny's Right is north of Krui town. Take the main coastal road north and look for the bay access track — a dirt road leading down through trees to the beach. There is no surf camp at this break; visitors base themselves in Krui town.",
+      steps: [
+        "From Krui town, head north on the coastal road",
+        "After approximately 20–25km look for a dirt track leading right toward the sea",
+        "Follow the track to the bay — the wave is visible from the beach",
+        "Park near the tree line and walk to the water's edge to check conditions",
+        "Enter via the sandy channel at the south end of the bay",
+      ],
+      tip: "Best visited as a day trip from Krui with a scooter. Go early — by the time you have surfed the morning session, the wind will be onshore. This spot is worth checking when Ujung Bocur is too crowded or the swell is too big for the headland breaks.",
+    },
+
+    seasonChart: [
+      { month: "Jan", swell: 3, wind: 3, overall: 3 },
+      { month: "Feb", swell: 3, wind: 3, overall: 3 },
+      { month: "Mar", swell: 5, wind: 5, overall: 4 },
+      { month: "Apr", swell: 6, wind: 7, overall: 6 },
+      { month: "May", swell: 7, wind: 8, overall: 7 },
+      { month: "Jun", swell: 8, wind: 8, overall: 8 },
+      { month: "Jul", swell: 8, wind: 9, overall: 8 },
+      { month: "Aug", swell: 7, wind: 8, overall: 7 },
+      { month: "Sep", swell: 6, wind: 7, overall: 6 },
+      { month: "Oct", swell: 5, wind: 5, overall: 5 },
+      { month: "Nov", swell: 3, wind: 3, overall: 3 },
+      { month: "Dec", swell: 3, wind: 2, overall: 3 },
+    ],
+    seasonNote: "Follows the Krui seasonal pattern — April to November for the dry season SE trades and Indian Ocean groundswells. Scores slightly below the headland breaks because it needs the swell to wrap into the bay. Best enjoyed in the May–August window when the swell has enough size and direction to fully activate the point.",
+
+    gallery: [
+      { url: "https://images.unsplash.com/photo-1519451241324-20b4ea2c4220?w=900&q=80", caption: "Long right walls — Sumatra's answer to the goofy-foot" },
+      { url: "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=900&q=80", caption: "The bay at Jenny's Right — jungle to the waterline" },
+      { url: "https://images.unsplash.com/photo-1530870110042-98b2cb110834?w=900&q=80", caption: "Morning offshore glass on the Lampung coast" },
+      { url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=900&q=80", caption: "Tropical coastline north of Krui" },
+    ],
+  },
+  ujung_walur: {
+    name: "Ujung Walur",
+    region: "Krui, Lampung, Sumatra",
+    country: "Indonesia",
+    tagline: "A reliable, under-surfed reef break between Krui Left and Mandiri Beach — an insider option when the main spots are crowded.",
+
+    difficulty: {
+      level: 2,
+      label: "Intermediate",
+      note: "A consistent, mid-difficulty reef break that rewards wave reading and positioning. Not as heavy as Ujung Bocur or Way Jambu but gets powerful enough on big swells to demand respect. Suitable for intermediates upward.",
+    },
+
+    heroImage: "ujung-walur.jpg",
+
+    stats: [
+      { label: "Break Type",   value: "Reef Break"          },
+      { label: "Wave Type",    value: "Left-hander"         },
+      { label: "Best Swell",   value: "SW – S"              },
+      { label: "Swell Size",   value: "Chest – Overhead"    },
+      { label: "Best Wind",    value: "SE – E Offshore"     },
+      { label: "Best Tide",    value: "Mid tide"            },
+      { label: "Crowd Factor", value: "Very Low"            },
+      { label: "Fun Factor",   value: "7 / 10"              },
+    ],
+
+    story: {
+      heading: "The Quiet One",
+      body: [
+        "Between the Krui town reef breaks and the long stretch of Mandiri Beach sits Ujung Walur — a reef break that most visiting surfers drive past on their way to the more famous spots nearby. That oversight is their loss and your opportunity.",
+        "The wave is a consistent left-hander that breaks over a coral shelf with enough predictability to build a read on quickly. It doesn't have the length of Ujung Bocur or the raw power of Way Jambu, but on its day — head-high swell, light offshore, mid tide — it produces clean, enjoyable waves with almost nobody out.",
+        "For surfers staying in the Krui area for a week or more, Ujung Walur becomes the spot to escape to when the main breaks are crowded or when you want a lower-intensity session without travelling far. The reef is accessible, the channel is clear, and the paddle out is straightforward.",
+      ],
+    },
+
+    technical: [
+      {
+        title:   "Reef Layout",
+        icon:    "🪨",
+        content: "A coral shelf with a defined takeoff zone and a running left wall. Cleaner and more consistent than a beach break but without the mechanical precision of the headland reefs. Wave selection is the key skill — the better sets offer a longer wall; the average sets close out quickly on the inside section.",
+      },
+      {
+        title:   "Tidal Window",
+        icon:    "🌊",
+        content: "Mid tide is the sweet spot. Low tide exposes too much of the reef and the wave gets very shallow on the inside. High tide softens the wave significantly. The mid-tide window is usually 2–3 hours in the morning before the sea breeze builds.",
+      },
+      {
+        title:   "Swell Sensitivity",
+        icon:    "💨",
+        content: "Works best on SW–S swells of chest to overhead size. Too small and the wave lacks shape; too big (above overhead) and it tends to close out across the reef rather than walling. The ideal window is narrower than nearby spots but within it the wave is consistently enjoyable.",
+      },
+      {
+        title:   "Value Proposition",
+        icon:    "🏄",
+        content: "The real advantage of Ujung Walur is the crowd count — typically zero to two surfers on any given morning. On a day when Krui Left has 20 in the lineup and Mandiri has a dozen peak-hunters spread across the sand, paddling out here alone for a two-hour session is a genuine pleasure.",
+      },
+    ],
+
+    hazards: [
+      {
+        level:  "medium",
+        title:  "Inside Reef Section",
+        detail: "The wave closes out on a shallow inside section at lower tides. Always be aware of where the tide is and know your exit before the wave runs you into the inside. Exit via the channel before the wave fully shuts down.",
+      },
+      {
+        level:  "low",
+        title:  "Urchins",
+        detail: "Urchins are present on the reef shelf. Avoid putting feet down on the reef — even in shallow sections use your hands to push off rather than standing. Reef booties reduce the risk.",
+      },
+    ],
+
+    access: {
+      overview: "Ujung Walur sits between Krui town and Mandiri Beach on the main coastal road. There is no dedicated signage — look for the reef visible from the road at low tide and the small parking area used by occasional local surfers.",
+      steps: [
+        "From Krui town, take the coastal road south toward Tanjung Setia",
+        "After approximately 3–4km look for the reef break visible from the road",
+        "Park on the roadside verge and walk down the short path to the beach",
+        "Entry via the sandy channel at the north end of the reef",
+        "Easily combined with a morning at Krui Left followed by an afternoon session here",
+      ],
+      tip: "Ask at your surf camp or accommodation about Ujung Walur — most camps know it as a local secret session spot. Early morning on a mid-tide day with nobody out is the perfect scenario.",
+    },
+
+    seasonChart: [
+      { month: "Jan", swell: 3, wind: 2, overall: 2 },
+      { month: "Feb", swell: 3, wind: 3, overall: 3 },
+      { month: "Mar", swell: 4, wind: 4, overall: 4 },
+      { month: "Apr", swell: 6, wind: 6, overall: 6 },
+      { month: "May", swell: 7, wind: 7, overall: 7 },
+      { month: "Jun", swell: 8, wind: 8, overall: 8 },
+      { month: "Jul", swell: 8, wind: 9, overall: 8 },
+      { month: "Aug", swell: 7, wind: 8, overall: 7 },
+      { month: "Sep", swell: 6, wind: 7, overall: 6 },
+      { month: "Oct", swell: 5, wind: 5, overall: 5 },
+      { month: "Nov", swell: 3, wind: 3, overall: 3 },
+      { month: "Dec", swell: 3, wind: 2, overall: 2 },
+    ],
+    seasonNote: "Best during the dry season core (May–August) along with the rest of the Krui coast. Works on the same Indian Ocean groundswells as the neighbouring breaks but is less consistent because its reef needs a specific SW–S direction to line up properly. A reliable backup rather than a destination spot.",
+
+    gallery: [
+      { url: "https://images.unsplash.com/photo-1455729552865-3658a5d39692?w=900&q=80", caption: "Clean reef left — nobody out" },
+      { url: "https://images.unsplash.com/photo-1520454974749-a8beb6c37ded?w=900&q=80", caption: "Sumatran coast between Krui and Mandiri" },
+      { url: "https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=900&q=80", caption: "Morning light on the Krui coastline" },
+      { url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&q=80", caption: "Offshore conditions — dry season morning" },
     ],
   },
 };

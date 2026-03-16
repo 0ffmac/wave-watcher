@@ -5,7 +5,7 @@ import {
   Tooltip, ResponsiveContainer, Cell,
 } from 'recharts';
 import { ArrowLeft, AlertTriangle, Info, Map, Navigation, Calendar } from 'lucide-react';
-import { SPOT_INFO } from '../data/spotInfoData';
+import { SPOT_INFO } from '../data/spotInfo';
 
 // ─── Difficulty stars ────────────────────────────────────────────────────────
 const DifficultyBadge = ({ level, label }) => {
