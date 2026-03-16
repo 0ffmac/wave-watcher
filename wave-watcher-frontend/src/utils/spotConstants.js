@@ -63,3 +63,36 @@ export const MIN_SURF_PERIOD = 7;
 // This should never be hit if spotConfig is complete.
 // ---------------------------------------------------------------------------
 export const SWELL_WINDOW_DEFAULTS = [160, 260];
+
+// ---------------------------------------------------------------------------
+// REGION_PERIOD_CORRECTION
+// Open-Meteo ERA5 systematically underestimates swell period by 2–4s versus
+// Surfline LOTUS / WAVEWATCH III, especially for long-period groundswell.
+// Apply this multiplier to period values BEFORE display and energy calculation.
+// DO NOT apply to calculateSurfHeight — spotScaleFactor was calibrated against
+// the raw (lower) Open-Meteo period and would need full re-tuning if changed.
+//
+// Derivation:
+//   Indonesia Sumatra: Surfline shows 15s, Open-Meteo shows 12s → 15/12 = 1.25
+//   Indonesia Bali:    Surfline shows 14s, Open-Meteo shows 11s → 14/11 = 1.27
+//   France (Atlantic): Surfline shows ~13s, Open-Meteo shows ~11s → 1.18
+//   USA Florida:       Short-period wind swell, model bias minimal → 1.00
+//
+// Tune upward if app still reads too low vs Surfline.
+// Tune downward if corrected period overshoots Surfline.
+// ---------------------------------------------------------------------------
+export const REGION_PERIOD_CORRECTION = {
+  indonesia_sumatra:  1.20,
+  indonesia_bali:     1.20,
+  indonesia_mentawai: 1.20,
+  france_hossegor:    1.15,
+  france_capbreton:   1.15,
+  usa_florida:        1.00,
+};
+
+// ---------------------------------------------------------------------------
+// Helper: get period correction factor for a given region string.
+// Returns 1.0 (no correction) if the region is unrecognised or null.
+// ---------------------------------------------------------------------------
+export const getPeriodCorrection = (region) =>
+  REGION_PERIOD_CORRECTION[region] ?? 1.0;

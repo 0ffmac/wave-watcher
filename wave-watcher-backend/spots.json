@@ -228,7 +228,7 @@
     "region": "france_hossegor",
     "ideal_swell": [270, 310],
     "offshore_wind": [45, 135],
-    "desc": "World-class heavy barrels. Expert only. Best on incoming mid-tide."
+    "onshore_wind": [225, 315]
   },
   "fr_la_nord": {
     "name": "La Nord",
@@ -239,7 +239,7 @@
     "region": "france_hossegor",
     "ideal_swell": [280, 320],
     "offshore_wind": [45, 135],
-    "desc": "Big wave spot. Handles 15ft+. Needs a big board and serious experience."
+    "onshore_wind": [225, 315]
   },
   "fr_la_sud": {
     "name": "La Sud",
@@ -250,7 +250,7 @@
     "region": "france_hossegor",
     "ideal_swell": [270, 300],
     "offshore_wind": [45, 135],
-    "desc": "Beginner friendly. Sheltered from big NW swells by the jetty."
+    "onshore_wind": [225, 315]
   },
   "fr_la_piste": {
     "name": "La Piste",
@@ -261,7 +261,7 @@
     "region": "france_hossegor",
     "ideal_swell": [270, 310],
     "offshore_wind": [45, 135],
-    "desc": "Powerful, hollow beach break. Handles size well and known for heavy tubes."
+    "onshore_wind": [225, 315]
   },
   "fr_santocha": {
     "name": "Santocha",
@@ -272,7 +272,7 @@
     "region": "france_hossegor",
     "ideal_swell": [260, 300],
     "offshore_wind": [45, 135],
-    "desc": "Rock-bottomed peaks. Very consistent and holds its shape during bigger swells."
+    "onshore_wind": [225, 315]
   },
   "us_jax_pier": {
     "name": "Jax Beach Pier",

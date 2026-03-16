@@ -15,7 +15,7 @@ import {
   calculateEnergy,
   calculateConditionRating,
 } from "../utils/surfCalculations";
-import { MIN_SURF_PERIOD } from '../utils/spotConstants';
+import { MIN_SURF_PERIOD, getPeriodCorrection } from '../utils/spotConstants';
 
 // Helper for cardinal directions
 const getCardinal = (deg) => {
@@ -48,9 +48,11 @@ const ForecastTable = ({
   spotsMetadata,
   finalScaleFactor = 1.0,   // replaces inputScaleFactor — combined regional + spot factor
   energyMultiplier = 14,
+  currentIdx = 0,
 }) => {
   const [expandedDays, setExpandedDays] = useState({});
   const spotMeta = spotsMetadata?.[spotId];
+  const periodCorrection = getPeriodCorrection(spotMeta?.region);
 
   const toggleDay = (dayStr) => {
     setExpandedDays((prev) => ({ ...prev, [dayStr]: !prev[dayStr] }));
@@ -82,13 +84,15 @@ const ForecastTable = ({
       days.push(dayEntry);
     }
 
-    const pSwellHeight = data.swell_height?.[i] ?? 0;
-    const pSwellPeriod = data.swell_period?.[i] ?? 12;
-    const pSwellDir = data.swell_direction?.[i] ?? 210;
+    const pSwellHeight  = data.swell_height?.[i] ?? 0;
+    const pSwellPeriodRaw = data.swell_period?.[i] ?? 12;
+    const pSwellPeriod  = pSwellPeriodRaw * periodCorrection;   // corrected for display + energy
+    const pSwellDir     = data.swell_direction?.[i] ?? 210;
 
-    const sSwellHeight = data.secondary_swell_height?.[i] ?? 0;
-    const sSwellPeriod = data.secondary_swell_period?.[i] ?? 8;
-    const sSwellDir = data.secondary_swell_direction?.[i] ?? 240;
+    const sSwellHeight  = data.secondary_swell_height?.[i] ?? 0;
+    const sSwellPeriodRaw = data.secondary_swell_period?.[i] ?? 8;
+    const sSwellPeriod  = sSwellPeriodRaw * periodCorrection;   // corrected for display + energy
+    const sSwellDir     = data.secondary_swell_direction?.[i] ?? 240;
 
     const windSpeed = data.wind_speed?.[i] ?? 0;
     const windDir = data.wind_direction?.[i] ?? 0;
@@ -141,11 +145,16 @@ const ForecastTable = ({
 
     // Energy: centralized calculation
     const eMult = energyMultiplier;
+    // Energy uses finalScaleFactor-corrected heights (consistent with surf height display)
+    // and the period-corrected periods (consistent with display column).
+    // Still ~20-25% below Surfline because Open-Meteo only provides 2 swell partitions
+    // (Surfline tracks 3+). See V11 notes on switching to Stormglass for full accuracy.
     const energyValue =
-      calculateEnergy(pSwellHeight, pSwellPeriod, eMult) +
-      calculateEnergy(sSwellHeight, sSwellPeriod, eMult);
+      calculateEnergy(pSwellHeight * finalScaleFactor, pSwellPeriod, eMult) +
+      calculateEnergy(sSwellHeight * finalScaleFactor, sSwellPeriod, eMult);
 
     dayEntry.allHours.push({
+      idx: i,
       timestamp: date,
       time: format(date, "ha").toLowerCase(),
       hour: date.getHours(),
@@ -173,8 +182,6 @@ const ForecastTable = ({
     });
   });
 
-  const now = new Date();
-
   return (
     <div className="space-y-4">
       {days.slice(0, 6).map((day) => {
@@ -183,10 +190,12 @@ const ForecastTable = ({
           ? day.allHours
           : day.allHours.filter((h) => intervals.includes(h.hour));
 
-        // Filter out past hours for today (Allow current hour even if slightly past)
+        // Filter out past hours for today using currentIdx (timezone-safe).
+        // currentIdx is computed in dataTransformers.js using the spot's own timezone
+        // via the JS Intl API — always correct regardless of the user's browser timezone.
+        // We show from currentIdx - 1 so the most recently completed hour stays visible.
         if (day.isToday) {
-          const buffer = 60 * 60 * 1000; // 60 minutes buffer
-          displayRows = displayRows.filter((h) => h.timestamp.getTime() + buffer >= now.getTime());
+          displayRows = displayRows.filter((h) => h.idx >= currentIdx - 1);
         }
 
         // If it's today and all hours are past, don't show the day at all
