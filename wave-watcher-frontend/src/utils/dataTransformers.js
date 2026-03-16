@@ -3,6 +3,7 @@ import {
   calculateConditionRating,
 } from "./surfCalculations";
 import { getSpotById, getSpotLocation, getAllSpotsFlat } from "../data/spotConfig";
+import { getPeriodCorrection } from "./spotConstants";
 
 const SPOTS = getAllSpotsFlat();
 
@@ -67,12 +68,14 @@ export const transformForecastData = (data, activeSpotId) => {
   // We only use 'current' telemetry if hourly data is missing.
   const useHourlyForCurrent = true;
 
+  const periodCorrection = getPeriodCorrection(spotData?.region);
+
   // Dynamic Surf Range Calculation
   // We use the hourly forecast at currentIdx to ensure the header matches the table exactly.
   const pSwellSource = (useHourlyForCurrent || !data?.current)
     ? {
         height:    data?.hourly?.swell_height?.[currentIdx]    || 0,
-        period:    data?.hourly?.swell_period?.[currentIdx]    || 0,
+        period:    (data?.hourly?.swell_period?.[currentIdx]   || 0) * periodCorrection,
         direction: data?.hourly?.swell_direction?.[currentIdx] || 0,
       }
     : (data?.current?.swells?.[0] || { height: 0, period: 0, direction: 0 });
@@ -80,7 +83,7 @@ export const transformForecastData = (data, activeSpotId) => {
   const sSwellSource = (useHourlyForCurrent || !data?.current)
     ? {
         height:    data?.hourly?.secondary_swell_height?.[currentIdx]    || 0,
-        period:    data?.hourly?.secondary_swell_period?.[currentIdx]    || 0,
+        period:    (data?.hourly?.secondary_swell_period?.[currentIdx]   || 0) * periodCorrection,
         direction: data?.hourly?.secondary_swell_direction?.[currentIdx] || 0,
       }
     : (data?.current?.swells?.[1] || { height: 0, period: 0, direction: 0 });
