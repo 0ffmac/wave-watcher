@@ -15,7 +15,7 @@ import {
   calculateEnergy,
   calculateConditionRating,
 } from "../utils/surfCalculations";
-import { MIN_SURF_PERIOD, getPeriodCorrection } from '../utils/spotConstants';
+import { MIN_SURF_PERIOD, getPeriodCorrection, getEnergyMultiplier } from '../utils/spotConstants';
 
 // Helper for cardinal directions
 const getCardinal = (deg) => {
@@ -144,14 +144,17 @@ const ForecastTable = ({
     };
 
     // Energy: centralized calculation
-    const eMult = energyMultiplier;
+    const eMult = Math.max(energyMultiplier, getEnergyMultiplier(spotMeta?.region));
     // Energy uses finalScaleFactor-corrected heights (consistent with surf height display)
     // and the period-corrected periods (consistent with display column).
     // Still ~20-25% below Surfline because Open-Meteo only provides 2 swell partitions
     // (Surfline tracks 3+). See V11 notes on switching to Stormglass for full accuracy.
     const energyValue =
       calculateEnergy(pSwellHeight * finalScaleFactor, pSwellPeriod, eMult) +
-      calculateEnergy(sSwellHeight * finalScaleFactor, sSwellPeriod, eMult);
+      (sSwellPeriodRaw >= MIN_SURF_PERIOD
+        ? calculateEnergy(sSwellHeight * finalScaleFactor, sSwellPeriod, eMult)
+        : 0);
+
 
     dayEntry.allHours.push({
       idx: i,
