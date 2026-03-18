@@ -41,20 +41,20 @@ const NearbySpots = ({ activeSpotId, activeCountryKey, activeRegionKey, currentS
   return (
     <div className="mt-8">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nearby Spots in this Region</h3>
-        <div className="h-px flex-grow mx-4 bg-slate-100"></div>
+        <h3 className="text-[10px] font-black uppercase tracking-widest" style={{color:'#26344f'}}>Nearby Spots in this Region</h3>
+        <div className="h-px flex-grow mx-4" style={{background:'rgba(255,255,255,0.07)'}}></div>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-2">
         {nearbySpots.map((spot) => (
           <div 
             key={spot.id}
             onClick={() => onSpotSelect && onSpotSelect(spot.id)}
-            className="bg-white/70 backdrop-blur-md border border-slate-100/50 rounded-lg p-2.5 shadow-sm flex items-center justify-between group cursor-pointer hover:bg-white hover:border-blue-200 transition-all duration-300"
+            className="rounded-lg p-2.5 flex items-center justify-between group cursor-pointer transition-all duration-300" style={{background:'rgba(255,255,255,0.03)',border:'0.5px solid rgba(255,255,255,0.07)'}}
           >
             <div className="flex flex-col gap-1 min-w-0">
-              <span className="text-[11px] font-black text-slate-800 tracking-tight group-hover:text-blue-600 transition-colors truncate">{spot.name}</span>
+              <span className="text-[11px] font-black tracking-tight transition-colors truncate" style={{color:'#dde8ff'}}>{spot.name}</span>
               <div className="flex items-center gap-2">
-                <span className="text-[9px] font-bold text-slate-400 whitespace-nowrap">{spot.surfRange}</span>
+                <span className="text-[9px] font-bold whitespace-nowrap" style={{color:'#536280'}}>{spot.surfRange}</span>
                 <div className="flex gap-1">
                    {spot.ratingInfo.segments.map((active, i) => (
                      <div key={i} className={`w-1 h-1 rounded-full ${active ? spot.ratingInfo.color : 'bg-slate-100'}`} />
@@ -62,7 +62,7 @@ const NearbySpots = ({ activeSpotId, activeCountryKey, activeRegionKey, currentS
                 </div>
               </div>
             </div>
-            <ChevronRight size={12} className="text-slate-300 group-hover:text-blue-500 group-hover:translate-x-0.5 transition-all flex-shrink-0" />
+            <ChevronRight size={12} className="group-hover:translate-x-0.5 transition-all flex-shrink-0" style={{color:'#26344f'}} />
           </div>
         ))}
       </div>

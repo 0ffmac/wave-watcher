@@ -10,12 +10,9 @@ const SwellCompass = ({ degree, label, size = "large", isActive = false }) => {
   const isSmall = size === "small";
 
   return (
-    <div className={cn(
-      "flex flex-col items-center justify-center p-3 rounded-2xl transition-all duration-300",
-      "bg-white/40 backdrop-blur-md border border-white/60 shadow-sm",
-      isActive ? "ring-2 ring-blue-400/50 scale-105" : ""
-    )}>
-      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">
+    <div className={cn("flex flex-col items-center justify-center p-3 rounded-2xl transition-all duration-300", isActive ? "scale-105" : "")}
+      style={{background:'rgba(255,255,255,0.035)',border: isActive ? '0.5px solid rgba(34,211,238,0.4)' : '0.5px solid rgba(255,255,255,0.07)'}}>
+      <p className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{color:'#536280'}}>
         {label}
       </p>
 
@@ -54,17 +51,14 @@ const SwellCompass = ({ degree, label, size = "large", isActive = false }) => {
           <g transform={`rotate(${degree}, 50, 50)`} className="transition-transform duration-700 ease-out">
             <path
               d="M50 8 L64 42 L50 36 L36 42 Z"
-              fill={isActive ? "#3b82f6" : "#64748b"}
+              fill={isActive ? "#22d3ee" : "#536280"}
               className="drop-shadow-md"
             />
           </g>
         </svg>
       </div>
 
-      <p className={cn(
-        "font-black mt-2 text-slate-800 tracking-tight",
-        isSmall ? "text-xs" : "text-sm"
-      )}>
+      <p className={cn("font-black mt-2 tracking-tight", isSmall ? "text-xs" : "text-sm")} style={{color:'#dde8ff'}}>
         {degree}°
       </p>
     </div>

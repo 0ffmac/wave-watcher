@@ -51,9 +51,9 @@ function App() {
 
   if (loading && !data) {
     return (
-      <div className="h-screen w-screen flex flex-col items-center justify-center bg-slate-50 gap-4">
-        <Loader2 className="animate-spin text-blue-500" size={48} />
-        <p className="font-black text-xs uppercase tracking-[0.3em] text-slate-400">
+      <div className="h-screen w-screen flex flex-col items-center justify-center gap-4" style={{background:'#06101f'}}>
+        <Loader2 className="animate-spin text-cyan-400" size={48} />
+        <p className="font-black text-xs uppercase tracking-[0.3em]" style={{color:'#536280'}}>
           {detectedLocation ? "Loading Forecast" : "Detecting Location"}
         </p>
       </div>
@@ -112,9 +112,9 @@ function App() {
           />
         </Routes>
 
-        <footer className="mt-24 border-t border-slate-200 bg-white/50 py-12">
+        <footer className="mt-24 py-12" style={{borderTop:'0.5px solid rgba(255,255,255,0.07)',background:'rgba(255,255,255,0.02)'}}>
           <div className="container mx-auto px-6 text-center">
-            <p className="text-slate-400 font-bold text-xs uppercase tracking-[0.2em]">
+            <p className="font-bold text-xs uppercase tracking-[0.2em]" style={{color:'#26344f'}}>
               © 2026 WaveWatcher Forecast Services.
             </p>
           </div>

@@ -162,24 +162,23 @@ const ForecastChart = ({ data, spotId, spotsMetadata, inputScaleFactor = 1.0, cu
 
   return (
     <div className="container mx-auto px-6 py-8">
-      <div className="bg-white/60 backdrop-blur-xl border border-white/80 rounded-3xl p-8 shadow-xl">
-
+      <div className="rounded-3xl p-8" style={{background:'rgba(255,255,255,0.025)',border:'0.5px solid rgba(255,255,255,0.07)'}}>
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h3 className="font-black text-xl text-slate-800 tracking-tight">Today's Forecast</h3>
-            <p className="text-xs text-slate-400 font-semibold mt-0.5 uppercase tracking-widest">
+            <h3 className="font-black text-xl tracking-tight" style={{color:'#dde8ff'}}>Today's Forecast</h3>
+            <p className="text-xs font-semibold mt-0.5 uppercase tracking-widest" style={{color:'#536280'}}>
               Surf height · Wind speed
             </p>
           </div>
           <div className="flex gap-5">
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-blue-500 shadow-[0_0_6px_rgba(59,130,246,0.6)]" />
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Surf (m)</span>
+              <div className="w-3 h-3 rounded-full" style={{background:'#22d3ee',boxShadow:'0 0 8px rgba(34,211,238,0.5)'}} />
+              <span className="text-xs font-bold uppercase tracking-widest" style={{color:'#536280'}}>Surf (m)</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-8 border-t-2 border-dashed border-slate-400" />
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Wind (kts)</span>
+              <div className="w-8" style={{borderTop:'2px dashed rgba(245,158,11,0.7)'}} />
+              <span className="text-xs font-bold uppercase tracking-widest" style={{color:'#536280'}}>Wind (kts)</span>
             </div>
           </div>
         </div>
@@ -190,15 +189,15 @@ const ForecastChart = ({ data, spotId, spotsMetadata, inputScaleFactor = 1.0, cu
             <ComposedChart data={chartData} margin={{ top: 10, right: 20, left: -10, bottom: 20 }}>
               <defs>
                 <linearGradient id="surfGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%"  stopColor="#3b82f6" stopOpacity={0.35} />
-                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                  <stop offset="5%"  stopColor="#22d3ee" stopOpacity={0.28} />
+                  <stop offset="95%" stopColor="#22d3ee" stopOpacity={0} />
                 </linearGradient>
               </defs>
 
               <CartesianGrid
                 strokeDasharray="3 3"
                 vertical={false}
-                stroke="#e2e8f0"
+                stroke="rgba(255,255,255,0.05)"
               />
 
               {/* "Now" indicator */}
@@ -225,7 +224,7 @@ const ForecastChart = ({ data, spotId, spotsMetadata, inputScaleFactor = 1.0, cu
                 domain={[0, Math.ceil(maxSurf * 1.3)]}
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: '#3b82f6', fontSize: 10, fontWeight: 700 }}
+                tick={{ fill: '#22d3ee', fontSize: 9, fontWeight: 700 }}
                 tickFormatter={v => `${v}m`}
                 width={36}
               />
@@ -237,7 +236,7 @@ const ForecastChart = ({ data, spotId, spotsMetadata, inputScaleFactor = 1.0, cu
                 domain={[0, Math.ceil(maxWind * 1.4)]}
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 700 }}
+                tick={{ fill: 'rgba(245,158,11,0.6)', fontSize: 9, fontWeight: 700 }}
                 tickFormatter={v => `${v}kt`}
                 width={36}
               />
@@ -249,11 +248,11 @@ const ForecastChart = ({ data, spotId, spotsMetadata, inputScaleFactor = 1.0, cu
                 yAxisId="surf"
                 type="monotone"
                 dataKey="surf"
-                stroke="#3b82f6"
-                strokeWidth={3}
+                stroke="#22d3ee"
+                strokeWidth={2.5}
                 fill="url(#surfGradient)"
                 dot={false}
-                activeDot={{ r: 5, fill: '#3b82f6', strokeWidth: 2, stroke: '#fff' }}
+                activeDot={{ r: 5, fill: '#22d3ee', strokeWidth: 2, stroke: '#06101f' }}
                 connectNulls
               />
 
@@ -262,11 +261,11 @@ const ForecastChart = ({ data, spotId, spotsMetadata, inputScaleFactor = 1.0, cu
                 yAxisId="wind"
                 type="monotone"
                 dataKey="windKnots"
-                stroke="#94a3b8"
-                strokeWidth={2}
+                stroke="rgba(245,158,11,0.7)"
+                strokeWidth={1.8}
                 strokeDasharray="5 4"
                 dot={false}
-                activeDot={{ r: 4, fill: '#94a3b8', strokeWidth: 2, stroke: '#fff' }}
+                activeDot={{ r: 4, fill: '#f59e0b', strokeWidth: 2, stroke: '#06101f' }}
                 connectNulls
               />
             </ComposedChart>

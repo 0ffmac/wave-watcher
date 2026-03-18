@@ -18,7 +18,7 @@ const HeroSection = ({ spotName, rating, surfRange, location }) => {
         className="absolute inset-0 bg-cover bg-center transition-all duration-700"
         style={{ backgroundImage: `url('/ocean wave.jpg')` }}
       >
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent" />
+        <div className="absolute inset-0" style={{background:'linear-gradient(to top, rgba(6,16,31,0.97) 0%, rgba(6,16,31,0.4) 40%, rgba(6,16,31,0.1) 100%)'}} />
       </div>
 
       <div className="container mx-auto px-6 pb-6 md:pb-10 relative z-10 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
