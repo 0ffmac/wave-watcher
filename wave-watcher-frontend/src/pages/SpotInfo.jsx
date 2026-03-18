@@ -1,10 +1,9 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, Cell,
 } from 'recharts';
-import { ArrowLeft, AlertTriangle, Info, Map, Navigation, Calendar } from 'lucide-react';
+import { AlertTriangle, Info, Map, Navigation, Calendar } from 'lucide-react';
 import { SPOT_INFO } from '../data/spotInfo';
 
 // ─── Difficulty stars ────────────────────────────────────────────────────────
@@ -54,7 +53,6 @@ const SeasonTooltip = ({ active, payload, label }) => {
 
 // ─── Main Page ───────────────────────────────────────────────────────────────
 const SpotInfo = ({ activeSpotId }) => {
-  const navigate    = useNavigate();
   const spotId      = activeSpotId || 'ujung_bocur';
   const info        = SPOT_INFO[spotId];
 
@@ -67,12 +65,6 @@ const SpotInfo = ({ activeSpotId }) => {
           <p className="text-xl font-black text-slate-700">No Info Available Yet</p>
           <p className="text-sm mt-1">Detailed information for this spot is coming soon.</p>
         </div>
-        <button
-          onClick={() => navigate(-1)}
-          className="flex items-center gap-2 bg-blue-500 text-white px-6 py-3 rounded-full font-black text-sm hover:bg-blue-600 transition-colors"
-        >
-          <ArrowLeft size={16} /> Back to Forecast
-        </button>
       </div>
     );
   }
@@ -89,14 +81,6 @@ const SpotInfo = ({ activeSpotId }) => {
         />
         {/* Dark overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-
-        {/* Back button */}
-        <button
-          onClick={() => navigate(-1)}
-          className="absolute top-6 left-6 z-10 flex items-center gap-2 bg-white/20 backdrop-blur-md border border-white/30 text-white px-4 py-2 rounded-full text-sm font-bold hover:bg-white/30 transition-colors"
-        >
-          <ArrowLeft size={16} /> Back
-        </button>
 
         {/* Hero text */}
         <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12">
