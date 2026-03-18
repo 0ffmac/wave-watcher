@@ -11,7 +11,7 @@ import {
   ReferenceLine,
   Legend,
 } from 'recharts';
-import { format, parseISO, isToday, isTomorrow } from 'date-fns';
+import { format, parseISO, isToday } from 'date-fns';
 import { calculateSurfHeight } from '../utils/surfCalculations';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -24,6 +24,11 @@ const getCardinalArrow = (deg) => {
 
 const kmhToKnots = (kmh) => +(kmh / 1.852).toFixed(1);
 
+const TIME_LABELS = {
+  0: '12AM', 3: '3AM', 6: '6AM', 9: '9AM',
+  12: '12PM', 15: '3PM', 18: '6PM', 21: '9PM',
+};
+
 // ─── Custom Tooltip ──────────────────────────────────────────────────────────
 
 const CustomTooltip = ({ active, payload, label }) => {
@@ -33,7 +38,7 @@ const CustomTooltip = ({ active, payload, label }) => {
   return (
     <div className="bg-white/95 backdrop-blur-md border border-slate-200/80 p-4 rounded-2xl shadow-2xl min-w-[160px]">
       <p className="font-black text-slate-800 text-sm mb-3 border-b border-slate-100 pb-2">
-        {d.dayLabel} · {d.timeLabel}
+        {d.timeLabel}
       </p>
       <div className="space-y-2">
         <div className="flex items-center justify-between gap-4">
@@ -69,6 +74,7 @@ const ChartTick = ({ x, y, payload }) => {
   const label = payload?.value;
   if (!label) return null;
 
+  const isNow = label === 'NOW';
   const isDayLabel = ['TODAY', 'TMW', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'].includes(label);
 
   return (
@@ -78,9 +84,9 @@ const ChartTick = ({ x, y, payload }) => {
         y={0}
         dy={14}
         textAnchor="middle"
-        fill={isDayLabel ? '#334155' : '#94a3b8'}
-        fontSize={isDayLabel ? 11 : 10}
-        fontWeight={isDayLabel ? 800 : 600}
+        fill={isNow ? '#ef4444' : isDayLabel ? '#334155' : '#94a3b8'}
+        fontSize={isNow || isDayLabel ? 11 : 10}
+        fontWeight={isNow || isDayLabel ? 800 : 600}
         letterSpacing={isDayLabel ? 0.5 : 0}
       >
         {label}
@@ -102,14 +108,14 @@ const ForecastChart = ({ data, spotId, spotsMetadata, inputScaleFactor = 1.0, cu
     const times = data?.times || [];
     if (!times.length) return [];
 
-    // Start from currentIdx so the chart always opens at the present hour —
-    // matching exactly what ForecastTable shows as its first row.
-    // Show 48 hours forward from now.
-    const start = currentIdx ?? 0;
-    let lastDay = null;
+    // Show the full current day: 00:00 to 23:00.
+    // NOW is marked at currentIdx so the red line moves as time passes.
+    const todayStart = times.findIndex(t => isToday(parseISO(t)));
+    const todayEnd   = times.findLastIndex(t => isToday(parseISO(t)));
+    if (todayStart === -1) return [];
 
-    return times.slice(start, start + 48).map((time, offset) => {
-      const i = start + offset;   // ← real index into the data arrays
+    return times.slice(todayStart, todayEnd + 1).map((time, offset) => {
+      const i = todayStart + offset;
 
       const windDir   = data.wind_direction?.[i]  ?? 0;
       const windSpeed = data.wind_speed?.[i]       ?? 0;
@@ -129,45 +135,24 @@ const ForecastChart = ({ data, spotId, spotsMetadata, inputScaleFactor = 1.0, cu
         windDir, windSpeed, spotMeta, inputScaleFactor
       );
 
-      const parsed   = parseISO(time);
+      const parsed    = parseISO(time);
       const timeLabel = format(parsed, 'ha');
-      const dayStr   = format(parsed, 'EEE').toUpperCase();
-      const isNewDay = dayStr !== lastDay;
-      if (isNewDay) lastDay = dayStr;
+      const hour      = parsed.getHours();
 
-      const dayLabel = isNewDay
-        ? (isToday(parsed) ? 'TODAY' : isTomorrow(parsed) ? 'TMW' : dayStr)
-        : '';
-
-      const hour = parsed.getHours();
-      let tickLabel = '';
-      if (hour === 0)  tickLabel = isNewDay
-        ? (isToday(parsed) ? 'TODAY' : isTomorrow(parsed) ? 'TMW' : dayStr)
-        : '';
-      else if (hour === 6)  tickLabel = '6AM';
-      else if (hour === 12) tickLabel = '12PM';
-      else if (hour === 18) tickLabel = '6PM';
+      // Mark the current hour as NOW; all others get 3-hourly labels.
+      let tickLabel = i === currentIdx ? 'NOW' : (TIME_LABELS[hour] ?? '');
 
       return {
         key:       time,
-        dayLabel,
         timeLabel,
         tickLabel,
-        xLabel:    `${dayLabel}|${timeLabel}`,
         surf:      +Math.max(pSurf.max, sSurf.max).toFixed(2),
         windKnots: kmhToKnots(windSpeed),
         period:    Math.round(period),
         swellDir,
-        isNewDay,
       };
     });
   }, [data, spotMeta, inputScaleFactor, currentIdx]);
-
-  // Find day-boundary tickLabels for ReferenceLine separators
-  const dayBoundaries = chartData
-    .filter((d, i) => d.isNewDay && i > 0)
-    .map(d => d.tickLabel)
-    .filter(Boolean);
 
   // Max values for Y-axis domains
   const maxSurf = Math.max(...chartData.map(d => d.surf), 1);
@@ -182,7 +167,7 @@ const ForecastChart = ({ data, spotId, spotsMetadata, inputScaleFactor = 1.0, cu
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h3 className="font-black text-xl text-slate-800 tracking-tight">48-Hour Forecast</h3>
+            <h3 className="font-black text-xl text-slate-800 tracking-tight">Today's Forecast</h3>
             <p className="text-xs text-slate-400 font-semibold mt-0.5 uppercase tracking-widest">
               Surf height · Wind speed
             </p>
@@ -216,17 +201,13 @@ const ForecastChart = ({ data, spotId, spotsMetadata, inputScaleFactor = 1.0, cu
                 stroke="#e2e8f0"
               />
 
-              {/* Day separator reference lines */}
-              {dayBoundaries.map(label => (
-                <ReferenceLine
-                  key={label}
-                  x={label}
-                  stroke="#cbd5e1"
-                  strokeWidth={1}
-                  strokeDasharray="4 2"
-                  label={{ value: '', position: 'top' }}
-                />
-              ))}
+              {/* "Now" indicator */}
+              <ReferenceLine
+                x="NOW"
+                stroke="#ef4444"
+                strokeWidth={1.5}
+                strokeDasharray="3 3"
+              />
 
               <XAxis
                 dataKey="tickLabel"

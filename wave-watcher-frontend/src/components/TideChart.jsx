@@ -130,17 +130,19 @@ const TideChart = ({ tideForecast, times, lat = 0, spotName = '', currentIdx = 0
   const chartData = React.useMemo(() => {
     if (!tideForecast?.length || !times?.length) return [];
 
-    // Start from currentIdx — same hour ForecastTable starts from.
-    // Show 72 hours (3 days) forward from now.
-    const start = currentIdx ?? 0;
+    // Show full current day: 00:00 to 23:00.
+    const todayStart = times.findIndex(t => isToday(parseISO(t)));
+    const todayEnd   = times.findLastIndex(t => isToday(parseISO(t)));
+    if (todayStart === -1) return [];
+
     const extremeIndexes = new Set(
       findTideExtremes(tideForecast).map(e => e.index)
     );
     const extremeMap = {};
     findTideExtremes(tideForecast).forEach(e => { extremeMap[e.index] = e; });
 
-    return tideForecast.slice(start, start + 72).map((h, offset) => {
-      const i    = start + offset;   // ← real index into the times array
+    return tideForecast.slice(todayStart, todayEnd + 1).map((h, offset) => {
+      const i    = todayStart + offset;
       const time = times[i];
       if (!time) return null;
       const parsed = parseISO(time);
@@ -148,14 +150,13 @@ const TideChart = ({ tideForecast, times, lat = 0, spotName = '', currentIdx = 0
       const hour = parsed.getHours();
 
       let tickLabel = '';
-      if (hour === 0) {
-        const isFirst = offset === 0;
-        tickLabel = isFirst
-          ? (isToday(parsed) ? 'TODAY' : format(parsed, 'EEE').toUpperCase())
-          : format(parsed, 'EEE').toUpperCase();
-      } else if (hour === 6)  tickLabel = '6AM';
-      else if (hour === 12)   tickLabel = '12PM';
-      else if (hour === 18)   tickLabel = '6PM';
+      if (hour === 0)       tickLabel = 'TODAY';
+      else if (hour === 6)  tickLabel = '6AM';
+      else if (hour === 12) tickLabel = '12PM';
+      else if (hour === 18) tickLabel = '6PM';
+
+      // Override with NOW at the current hour so the red line is correctly placed.
+      if (i === currentIdx) tickLabel = 'NOW';
 
       return {
         key:         time,
@@ -170,10 +171,10 @@ const TideChart = ({ tideForecast, times, lat = 0, spotName = '', currentIdx = 0
     }).filter(Boolean);
   }, [tideForecast, times, currentIdx]);
 
-  // nowKey is the first visible data point — which is the current hour.
-  // No need to scan for the nearest time; currentIdx already points to it.
+  // nowKey is the ISO timestamp of the current hour.
+  // Used to anchor the red ReferenceLine at the correct position mid-chart.
   const nowKey = React.useMemo(() => {
-    return chartData?.[0]?.key ?? null;
+    return chartData.find(d => d.tickLabel === 'NOW')?.key ?? null;
   }, [chartData]);
 
   // Build daylight ReferenceArea bands
@@ -252,7 +253,6 @@ const TideChart = ({ tideForecast, times, lat = 0, spotName = '', currentIdx = 0
                   <React.Fragment key={dateStr}>
                     {/* Pre-sunrise night band */}
                     <ReferenceArea
-                      xAxisId="iso"
                       x1={dayStart}
                       x2={sunriseKey}
                       fill="#f1f5f9"
@@ -260,7 +260,6 @@ const TideChart = ({ tideForecast, times, lat = 0, spotName = '', currentIdx = 0
                     />
                     {/* Post-sunset night band */}
                     <ReferenceArea
-                      xAxisId="iso"
                       x1={sunsetKey}
                       x2={dayEnd}
                       fill="#f1f5f9"
@@ -278,37 +277,31 @@ const TideChart = ({ tideForecast, times, lat = 0, spotName = '', currentIdx = 0
               <ReferenceLine y={0} stroke="#e2e8f0" strokeWidth={1} />
 
               <XAxis
-                dataKey="tickLabel"
+                dataKey="key"
                 axisLine={false}
                 tickLine={false}
                 interval={0}
                 height={32}
                 tick={({ x, y, payload }) => {
-                  const label = payload?.value;
+                  const entry = chartData.find(d => d.key === payload?.value);
+                  const label = entry?.tickLabel;
                   if (!label) return null;
-                  const isDayLabel = !['6AM','12PM','6PM'].includes(label);
+                  const isNow = label === 'NOW';
+                  const isDayLabel = !['6AM','12PM','6PM','NOW'].includes(label);
                   return (
                     <g transform={`translate(${x},${y})`}>
                       <text
                         x={0} y={0} dy={14}
                         textAnchor="middle"
-                        fill={isDayLabel ? '#334155' : '#94a3b8'}
-                        fontSize={isDayLabel ? 11 : 10}
-                        fontWeight={isDayLabel ? 800 : 600}
+                        fill={isNow ? '#ef4444' : isDayLabel ? '#334155' : '#94a3b8'}
+                        fontSize={isNow || isDayLabel ? 11 : 10}
+                        fontWeight={isNow || isDayLabel ? 800 : 600}
                       >
                         {label}
                       </text>
                     </g>
                   );
                 }}
-              />
-
-              {/* Hidden XAxis used only to anchor ReferenceLine at the current ISO timestamp */}
-              <XAxis
-                xAxisId="iso"
-                dataKey="key"
-                hide={true}
-                height={0}
               />
 
               <YAxis
@@ -325,7 +318,6 @@ const TideChart = ({ tideForecast, times, lat = 0, spotName = '', currentIdx = 0
               {/* "Now" vertical reference line */}
               {nowKey && (
                 <ReferenceLine
-                  xAxisId="iso"
                   x={nowKey}
                   stroke="#ef4444"
                   strokeWidth={1.5}
