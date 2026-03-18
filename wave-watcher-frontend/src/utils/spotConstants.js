@@ -82,12 +82,12 @@ export const SWELL_WINDOW_DEFAULTS = [160, 260];
 // Tune downward if corrected period overshoots Surfline.
 // ---------------------------------------------------------------------------
 export const REGION_PERIOD_CORRECTION = {
-  indonesia_sumatra:  1.20,
-  indonesia_bali:     1.20,
-  indonesia_mentawai: 1.20,
-  france_hossegor:    1.15,
-  france_capbreton:   1.15,
-  usa_florida:        1.00,
+  indonesia_sumatra: 1.3,
+  indonesia_bali: 1.2,
+  indonesia_mentawai: 1.2,
+  france_hossegor: 1.15,
+  france_capbreton: 1.15,
+  usa_florida: 1.0,
 };
 
 // ---------------------------------------------------------------------------
@@ -96,3 +96,32 @@ export const REGION_PERIOD_CORRECTION = {
 // ---------------------------------------------------------------------------
 export const getPeriodCorrection = (region) =>
   REGION_PERIOD_CORRECTION[region] ?? 1.0;
+
+// ---------------------------------------------------------------------------
+// REGION_ENERGY_MULTIPLIER
+// Calibrated so that at ~1.0m Hs (Open-Meteo, after finalScaleFactor) and 13s
+// the displayed energy matches Surfline's reference for each region.
+//
+// Derivation for Indonesia: target ~350kJ at H=1.05m, T=13s
+//   350 = 1.05² × 13 × M  →  M ≈ 24.5  →  rounded to 25
+//
+// The global default of 14 (set in dataTransformers / backend meta) is tuned
+// for tiny Florida wind swells and badly undershoots Indo groundswell.
+// Front-end reads the region value first; backend meta.energyMultiplier only
+// applies when the backend explicitly overrides it above this value.
+// ---------------------------------------------------------------------------
+export const REGION_ENERGY_MULTIPLIER = {
+  indonesia_sumatra: 25,
+  indonesia_bali: 25,
+  indonesia_mentawai: 25,
+  france_hossegor: 20,
+  france_capbreton: 20,
+  usa_florida: 14,
+};
+
+// ---------------------------------------------------------------------------
+// Helper: get energy multiplier for a given region string.
+// Returns 14 (conservative default) if the region is unrecognised or null.
+// ---------------------------------------------------------------------------
+export const getEnergyMultiplier = (region) =>
+  REGION_ENERGY_MULTIPLIER[region] ?? 14;

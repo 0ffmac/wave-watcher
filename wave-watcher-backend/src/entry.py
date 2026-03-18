@@ -28,7 +28,7 @@ from workers import WorkerEntrypoint, Response
 #   inputScaleFactor=1.0 is a safe default for any untested region.
 # ─────────────────────────────────────────────────────────────────────────────
 REGION_CONFIG = {
-    "indonesia_sumatra": {"inputScaleFactor": 0.75, "energyMultiplier": 14},
+    "indonesia_sumatra": {"inputScaleFactor": 0.95, "energyMultiplier": 14},
     "indonesia_mentawai": {"inputScaleFactor": 0.75, "energyMultiplier": 14},
     "indonesia_bali": {"inputScaleFactor": 0.80, "energyMultiplier": 13},
     "france_hossegor": {"inputScaleFactor": 1.00, "energyMultiplier": 11},
@@ -292,7 +292,7 @@ class Default(WorkerPoint := WorkerEntrypoint):
             # Cloudflare injects CF-IPCountry and CF-IPContinent on every request.
             # No external API call needed — zero cost, zero latency, no CORS.
             if pathname.endswith("/location"):
-                country   = request.headers.get("CF-IPCountry")   or "XX"
+                country = request.headers.get("CF-IPCountry") or "XX"
                 continent = request.headers.get("CF-IPContinent") or "XX"
                 return Response(
                     json.dumps({"country": country, "continent": continent}),
@@ -722,10 +722,12 @@ class Default(WorkerPoint := WorkerEntrypoint):
                 c_cloud_cover = safe_val(mh["cloud_cover"], idx)
             else:
                 m_res = await fetch(
-                    f"https://marine-api.open-meteo.com/v1/marine?latitude={spot['lat']}&longitude={spot['lon']}&hourly=swell_wave_height,swell_wave_period,swell_wave_direction,secondary_swell_wave_height,secondary_swell_wave_period,secondary_swell_wave_direction,wave_height,sea_surface_temperature,sea_level_height_msl&timezone={spot['timezone']}&forecast_days=8"
+                    f"https://marine-api.open-meteo.com/v1/marine?latitude={spot['lat']}&longitude={spot['lon']}&hourly=swell_wave_height,swell_wave_period,swell_wave_direction,secondary_swell_wave_height,secondary_swell_wave_period,secondary_swell_wave_direction,wave_height,sea_surface_temperature,sea_level_height_msl&timezone={spot['timezone']}&forecast_days=8",
+                    no_cache,
                 )
                 w_res = await fetch(
-                    f"https://api.open-meteo.com/v1/forecast?latitude={spot['lat']}&longitude={spot['lon']}&hourly=wind_speed_10m,wind_direction_10m,wind_gusts_10m,temperature_2m,rain,cloud_cover&timezone={spot['timezone']}&forecast_days=8"
+                    f"https://api.open-meteo.com/v1/forecast?latitude={spot['lat']}&longitude={spot['lon']}&hourly=wind_speed_10m,wind_direction_10m,wind_gusts_10m,temperature_2m,rain,cloud_cover&timezone={spot['timezone']}&forecast_days=8",
+                    no_cache,
                 )
 
                 if not m_res.ok or not w_res.ok:
