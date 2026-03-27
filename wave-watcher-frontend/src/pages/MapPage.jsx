@@ -13,9 +13,9 @@ const MapPage = ({
 }) => {
   if (loading && !data) {
     return (
-      <div className="h-[80vh] w-full flex flex-col items-center justify-center bg-slate-900 gap-4">
-        <Loader2 className="animate-spin text-blue-500" size={48} />
-        <p className="font-black text-xs uppercase tracking-[0.3em] text-slate-400">
+      <div className="h-[80vh] w-full flex flex-col items-center justify-center gap-4" style={{background:'var(--ww-bg)'}}>
+        <Loader2 className="animate-spin" size={48} style={{color:'var(--ww-accent)'}} />
+        <p className="font-black text-xs uppercase tracking-[0.3em]" style={{color:'var(--ww-text-2)'}}>
           Loading Map Data
         </p>
       </div>
@@ -31,7 +31,7 @@ const MapPage = ({
   } = transformedData;
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen" style={{background:'var(--ww-bg)'}}>
       <div className="container mx-auto px-4 md:px-6 pt-24 pb-8">
         <BigMap
           lat={lat}

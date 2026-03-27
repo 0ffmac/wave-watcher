@@ -36,28 +36,28 @@ const CustomTooltip = ({ active, payload, label }) => {
   const d = payload[0]?.payload;
   if (!d) return null;
   return (
-    <div className="bg-white/95 backdrop-blur-md border border-slate-200/80 p-4 rounded-2xl shadow-2xl min-w-[160px]">
-      <p className="font-black text-slate-800 text-sm mb-3 border-b border-slate-100 pb-2">
+    <div className="backdrop-blur-md p-4 rounded-2xl shadow-2xl min-w-[160px]" style={{background:'var(--ww-tooltip-bg)',border:'0.5px solid var(--ww-border)'}}>
+      <p className="font-black text-sm mb-3 pb-2" style={{color:'var(--ww-text)',borderBottom:'0.5px solid var(--ww-border)'}}>
         {d.timeLabel}
       </p>
       <div className="space-y-2">
         <div className="flex items-center justify-between gap-4">
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Surf</span>
+          <span className="text-xs font-bold uppercase tracking-widest" style={{color:'var(--ww-text-2)'}}>Surf</span>
           <span className="text-sm font-black text-blue-500">{d.surf.toFixed(1)}m</span>
         </div>
         <div className="flex items-center justify-between gap-4">
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Wind</span>
+          <span className="text-xs font-bold uppercase tracking-widest" style={{color:'var(--ww-text-2)'}}>Wind</span>
           <span className="text-sm font-black text-slate-500">{d.windKnots}kts</span>
         </div>
         {d.period > 0 && (
           <div className="flex items-center justify-between gap-4">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Period</span>
+            <span className="text-xs font-bold uppercase tracking-widest" style={{color:'var(--ww-text-2)'}}>Period</span>
             <span className="text-sm font-black text-indigo-400">{d.period}s</span>
           </div>
         )}
         {d.swellDir != null && (
           <div className="flex items-center justify-between gap-4">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Swell</span>
+            <span className="text-xs font-bold uppercase tracking-widest" style={{color:'var(--ww-text-2)'}}>Swell</span>
             <span className="text-sm font-black text-slate-500">
               {getCardinalArrow(d.swellDir)} {Math.round(d.swellDir)}°
             </span>
@@ -162,23 +162,23 @@ const ForecastChart = ({ data, spotId, spotsMetadata, inputScaleFactor = 1.0, cu
 
   return (
     <div className="container mx-auto px-6 py-8">
-      <div className="rounded-3xl p-8" style={{background:'rgba(255,255,255,0.025)',border:'0.5px solid rgba(255,255,255,0.07)'}}>
+      <div className="rounded-3xl p-8" style={{background:'var(--ww-card-2)',border:'0.5px solid var(--ww-border)'}}>
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h3 className="font-black text-xl tracking-tight" style={{color:'#dde8ff'}}>Today's Forecast</h3>
-            <p className="text-xs font-semibold mt-0.5 uppercase tracking-widest" style={{color:'#536280'}}>
+            <h3 className="font-black text-xl tracking-tight" style={{color:'var(--ww-text)'}}>Today's Forecast</h3>
+            <p className="text-xs font-semibold mt-0.5 uppercase tracking-widest" style={{color:'var(--ww-text-2)'}}>
               Surf height · Wind speed
             </p>
           </div>
           <div className="flex gap-5">
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full" style={{background:'#22d3ee',boxShadow:'0 0 8px rgba(34,211,238,0.5)'}} />
-              <span className="text-xs font-bold uppercase tracking-widest" style={{color:'#536280'}}>Surf (m)</span>
+              <div className="w-3 h-3 rounded-full" style={{background:'var(--ww-accent)',boxShadow:'0 0 8px var(--ww-accent-bg)'}} />
+              <span className="text-xs font-bold uppercase tracking-widest" style={{color:'var(--ww-text-2)'}}>Surf (m)</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-8" style={{borderTop:'2px dashed rgba(245,158,11,0.7)'}} />
-              <span className="text-xs font-bold uppercase tracking-widest" style={{color:'#536280'}}>Wind (kts)</span>
+              <span className="text-xs font-bold uppercase tracking-widest" style={{color:'var(--ww-text-2)'}}>Wind (kts)</span>
             </div>
           </div>
         </div>
@@ -197,7 +197,7 @@ const ForecastChart = ({ data, spotId, spotsMetadata, inputScaleFactor = 1.0, cu
               <CartesianGrid
                 strokeDasharray="3 3"
                 vertical={false}
-                stroke="rgba(255,255,255,0.05)"
+                stroke="var(--ww-chart-grid)"
               />
 
               {/* "Now" indicator */}

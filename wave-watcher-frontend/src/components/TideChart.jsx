@@ -72,9 +72,9 @@ const TideTooltip = ({ active, payload }) => {
   const d = payload[0]?.payload;
   if (!d || d.height == null) return null;
   return (
-    <div className="bg-white/95 backdrop-blur-md border border-slate-200/80 px-3 py-2 rounded-xl shadow-xl">
-      <p className="text-xs font-black text-slate-600">{d.timeLabel}</p>
-      <p className="text-sm font-black text-slate-800">{d.height.toFixed(1)}m</p>
+    <div className="px-3 py-2 rounded-xl shadow-xl" style={{background:'var(--ww-tooltip-bg)',border:'0.5px solid var(--ww-border)'}}>
+      <p className="text-xs font-black" style={{color:'var(--ww-text-2)'}}>{d.timeLabel}</p>
+      <p className="text-sm font-black" style={{color:'var(--ww-text)'}}>{d.height.toFixed(1)}m</p>
     </div>
   );
 };
@@ -203,13 +203,13 @@ const TideChart = ({ tideForecast, times, lat = 0, spotName = '', currentIdx = 0
 
   return (
     <div className="container mx-auto px-6 pb-8">
-      <div className="rounded-3xl p-8" style={{background:'rgba(255,255,255,0.025)',border:'0.5px solid rgba(255,255,255,0.07)'}}>
+      <div className="rounded-3xl p-8" style={{background:'var(--ww-card-2)',border:'0.5px solid var(--ww-border)'}}>
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="font-black text-xl tracking-tight" style={{color:'#dde8ff'}}>Tides</h3>
+            <h3 className="font-black text-xl tracking-tight" style={{color:'var(--ww-text)'}}>Tides</h3>
             {spotName && (
-              <p className="text-xs font-semibold mt-0.5 uppercase tracking-widest" style={{color:'#536280'}}>
+              <p className="text-xs font-semibold mt-0.5 uppercase tracking-widest" style={{color:'var(--ww-text-2)'}}>
                 {spotName}
               </p>
             )}
@@ -217,15 +217,15 @@ const TideChart = ({ tideForecast, times, lat = 0, spotName = '', currentIdx = 0
           <div className="flex gap-4">
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full" style={{background:'#2563eb'}} />
-              <span className="text-xs font-bold uppercase tracking-widest" style={{color:'#536280'}}>High</span>
+              <span className="text-xs font-bold uppercase tracking-widest" style={{color:'var(--ww-text-2)'}}>High</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full" style={{background:'#475569'}} />
-              <span className="text-xs font-bold uppercase tracking-widest" style={{color:'#536280'}}>Low</span>
+              <span className="text-xs font-bold uppercase tracking-widest" style={{color:'var(--ww-text-2)'}}>Low</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-3 h-px" style={{background:'#ef4444'}} />
-              <span className="text-xs font-bold uppercase tracking-widest" style={{color:'#536280'}}>Now</span>
+              <span className="text-xs font-bold uppercase tracking-widest" style={{color:'var(--ww-text-2)'}}>Now</span>
             </div>
           </div>
         </div>
@@ -254,14 +254,14 @@ const TideChart = ({ tideForecast, times, lat = 0, spotName = '', currentIdx = 0
                     <ReferenceArea
                       x1={dayStart}
                       x2={sunriseKey}
-                      fill="rgba(0,0,0,0.3)"
+                      fill="var(--ww-night-band)"
                       fillOpacity={0.7}
                     />
                     {/* Post-sunset night band */}
                     <ReferenceArea
                       x1={sunsetKey}
                       x2={dayEnd}
-                      fill="rgba(0,0,0,0.3)"
+                      fill="var(--ww-night-band)"
                       fillOpacity={0.7}
                     />
                   </React.Fragment>
@@ -273,7 +273,7 @@ const TideChart = ({ tideForecast, times, lat = 0, spotName = '', currentIdx = 0
                 horizontal={false}
                 vertical={false}
               />
-              <ReferenceLine y={0} stroke="rgba(255,255,255,0.06)" strokeWidth={1} />
+              <ReferenceLine y={0} stroke="var(--ww-border)" strokeWidth={1} />
 
               <XAxis
                 dataKey="key"
@@ -307,7 +307,7 @@ const TideChart = ({ tideForecast, times, lat = 0, spotName = '', currentIdx = 0
                 domain={[yMin, yMax]}
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: '#536280', fontSize: 9, fontWeight: 700 }}
+                tick={{ fill: 'var(--ww-text-2)', fontSize: 9, fontWeight: 700 }}
                 tickFormatter={v => `${v.toFixed(1)}m`}
                 width={36}
               />

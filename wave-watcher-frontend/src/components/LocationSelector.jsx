@@ -72,7 +72,7 @@ const LocationSelector = ({
     <div className="relative">
       <button
         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-        className="flex items-center gap-1.5 md:gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-xl font-bold text-xs md:text-sm transition-all cursor-pointer whitespace-nowrap" style={{background:'rgba(255,255,255,0.06)',border:'0.5px solid rgba(255,255,255,0.12)',color:'#dde8ff',backdropFilter:'blur(12px)'}}
+        className="flex items-center gap-1.5 md:gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-xl font-bold text-xs md:text-sm transition-all cursor-pointer whitespace-nowrap" style={{background:'var(--ww-card)',border:'0.5px solid var(--ww-border)',color:'var(--ww-text)',backdropFilter:'blur(12px)'}}
       >
         <MapPin size={14} className="md:w-4 md:h-4" />
         <span className="max-w-[150px] xs:max-w-none truncate">
@@ -90,12 +90,12 @@ const LocationSelector = ({
             className="fixed inset-0 z-40"
             onClick={() => setIsDropdownOpen(false)}
           />
-          <div className="absolute top-full left-0 mt-2 w-72 rounded-2xl transition-all py-3 z-50 max-h-[70vh] overflow-y-auto" style={{background:'#0d1f38',border:'0.5px solid rgba(255,255,255,0.1)',boxShadow:'0 24px 60px rgba(0,0,0,0.6)',backdropFilter:'blur(20px)'}}>
+          <div className="absolute top-full left-0 mt-2 w-72 rounded-2xl transition-all py-3 z-50 max-h-[70vh] overflow-y-auto" style={{background:'var(--ww-dropdown-bg)',border:'0.5px solid var(--ww-border)',boxShadow:'0 24px 60px rgba(0,0,0,0.6)',backdropFilter:'blur(20px)'}}>
             {/* Country Selector */}
-            <div className="px-3 pb-2 mb-2" style={{borderBottom:'0.5px solid rgba(255,255,255,0.07)'}}>
+            <div className="px-3 pb-2 mb-2" style={{borderBottom:'0.5px solid var(--ww-border)'}}>
               <div className="flex items-center gap-2 mb-2">
-                <Globe size={14} style={{color:'#536280'}} />
-                <span className="text-[10px] font-black uppercase tracking-widest" style={{color:'#536280'}}>
+                <Globe size={14} style={{color:'var(--ww-text-2)'}} />
+                <span className="text-[10px] font-black uppercase tracking-widest" style={{color:'var(--ww-text-2)'}}>
                   Country
                 </span>
               </div>
@@ -106,8 +106,8 @@ const LocationSelector = ({
                     onClick={() => handleCountryChange(country.key)}
                     className="px-3 py-1.5 rounded-lg text-xs font-bold transition-all"
                     style={activeCountryKey === country.key
-                      ? {background:'rgba(34,211,238,0.15)',color:'#22d3ee',border:'0.5px solid rgba(34,211,238,0.3)'}
-                      : {background:'rgba(255,255,255,0.04)',color:'#536280',border:'0.5px solid rgba(255,255,255,0.07)'}}
+                      ? {background:'var(--ww-accent-bg)',color:'var(--ww-accent)',border:'0.5px solid var(--ww-accent-border)'}
+                      : {background:'var(--ww-card)',color:'var(--ww-text-2)',border:'0.5px solid var(--ww-border)'}}
                   >
                     {country.name}
                   </button>
@@ -116,10 +116,10 @@ const LocationSelector = ({
             </div>
 
             {/* Region Selector */}
-            <div className="px-3 pb-2 mb-2" style={{borderBottom:'0.5px solid rgba(255,255,255,0.07)'}}>
+            <div className="px-3 pb-2 mb-2" style={{borderBottom:'0.5px solid var(--ww-border)'}}>
               <div className="flex items-center gap-2 mb-2">
-                <Mountain size={14} style={{color:'#536280'}} />
-                <span className="text-[10px] font-black uppercase tracking-widest" style={{color:'#536280'}}>
+                <Mountain size={14} style={{color:'var(--ww-text-2)'}} />
+                <span className="text-[10px] font-black uppercase tracking-widest" style={{color:'var(--ww-text-2)'}}>
                   Region
                 </span>
               </div>
@@ -130,8 +130,8 @@ const LocationSelector = ({
                     onClick={() => handleRegionChange(region.key)}
                     className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${!region.hasSpots ? "opacity-40" : ""}`}
                     style={activeRegionKey === region.key
-                      ? {background:'rgba(34,211,238,0.15)',color:'#22d3ee',border:'0.5px solid rgba(34,211,238,0.3)'}
-                      : {background:'rgba(255,255,255,0.04)',color:'#536280',border:'0.5px solid rgba(255,255,255,0.07)'}}
+                      ? {background:'var(--ww-accent-bg)',color:'var(--ww-accent)',border:'0.5px solid var(--ww-accent-border)'}
+                      : {background:'var(--ww-card)',color:'var(--ww-text-2)',border:'0.5px solid var(--ww-border)'}}
                   >
                     {region.name}
                   </button>
@@ -142,8 +142,8 @@ const LocationSelector = ({
             {/* Spots List */}
             <div className="px-3">
               <div className="flex items-center gap-2 mb-2">
-                <MapPin size={14} style={{color:'#536280'}} />
-                <span className="text-[10px] font-black uppercase tracking-widest" style={{color:'#536280'}}>
+                <MapPin size={14} style={{color:'var(--ww-text-2)'}} />
+                <span className="text-[10px] font-black uppercase tracking-widest" style={{color:'var(--ww-text-2)'}}>
                   Spots
                 </span>
               </div>
@@ -181,7 +181,7 @@ const LocationSelector = ({
                           <React.Fragment key={spotId}>
                             {showGroupHeader && (
                               <div className="px-3 pt-3 pb-1">
-                                <span className="text-[9px] font-black uppercase tracking-tighter" style={{color:'rgba(34,211,238,0.4)'}}>
+                                <span className="text-[9px] font-black uppercase tracking-tighter" style={{color:'var(--ww-accent)',opacity:0.4}}>
                                   {isGrouped}
                                 </span>
                               </div>
@@ -193,8 +193,8 @@ const LocationSelector = ({
                               }}
                               className={`w-full text-left px-3 py-2 rounded-lg text-sm font-bold transition-all ${isGrouped ? "ml-2 w-[calc(100%-8px)]" : ""}`}
                               style={activeSpotId === spotId
-                                ? {background:'rgba(34,211,238,0.1)',color:'#22d3ee'}
-                                : {color:'#536280'}}
+                                ? {background:'var(--ww-accent-bg)',color:'var(--ww-accent)'}
+                                : {color:'var(--ww-text-2)'}}
                             >
                               {spot.name || spotId}
                             </button>

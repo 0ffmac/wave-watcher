@@ -26,6 +26,12 @@ function App() {
   const [activeCountryKey, setActiveCountryKey] = useState(DEFAULT_COUNTRY);
   const [activeRegionKey, setActiveRegionKey] = useState(DEFAULT_REGION);
   const [hasInitializedLocation, setHasInitializedLocation] = useState(false);
+  const [theme, setTheme] = useState(() => localStorage.getItem('ww-theme') || 'dark');
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('ww-theme', theme);
+  }, [theme]);
 
   // 1. Data Fetching & Location Hook
   const { data, loading, error, detectedLocation } = useSurfData(activeSpotId);
@@ -51,9 +57,9 @@ function App() {
 
   if (loading && !data) {
     return (
-      <div className="h-screen w-screen flex flex-col items-center justify-center gap-4" style={{background:'#06101f'}}>
-        <Loader2 className="animate-spin text-cyan-400" size={48} />
-        <p className="font-black text-xs uppercase tracking-[0.3em]" style={{color:'#536280'}}>
+      <div className="h-screen w-screen flex flex-col items-center justify-center gap-4" style={{background:'var(--ww-bg)'}}>
+        <Loader2 className="animate-spin" size={48} style={{color:'var(--ww-accent)'}} />
+        <p className="font-black text-xs uppercase tracking-[0.3em]" style={{color:'var(--ww-text-2)'}}>
           {detectedLocation ? "Loading Forecast" : "Detecting Location"}
         </p>
       </div>
@@ -70,6 +76,8 @@ function App() {
           onSpotSelect={setActiveSpotId}
           onCountrySelect={setActiveCountryKey}
           onRegionSelect={setActiveRegionKey}
+          theme={theme}
+          onToggleTheme={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}
         />
 
         <Routes>
@@ -112,9 +120,9 @@ function App() {
           />
         </Routes>
 
-        <footer className="mt-24 py-12" style={{borderTop:'0.5px solid rgba(255,255,255,0.07)',background:'rgba(255,255,255,0.02)'}}>
+        <footer className="mt-24 py-12" style={{borderTop:'0.5px solid var(--ww-border)',background:'var(--ww-card-2)'}}>
           <div className="container mx-auto px-6 text-center">
-            <p className="font-bold text-xs uppercase tracking-[0.2em]" style={{color:'#26344f'}}>
+            <p className="font-bold text-xs uppercase tracking-[0.2em]" style={{color:'var(--ww-text-3)'}}>
               © 2026 WaveWatcher Forecast Services.
             </p>
           </div>

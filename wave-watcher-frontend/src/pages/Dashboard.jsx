@@ -78,16 +78,16 @@ const Dashboard = ({
               wind={wind}
               swells={mapSwells}
             />
-            <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-700" />
-              <h4 className="font-black text-2xl mb-2 relative z-10">
+            <div className="rounded-3xl p-8 relative overflow-hidden group" style={{background:'var(--ww-premium-bg)',border:'0.5px solid var(--ww-premium-border)'}}>
+              <div className="absolute top-0 right-0 w-32 h-32 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-700" style={{background:'var(--ww-premium-orb)'}} />
+              <h4 className="font-black text-2xl mb-2 relative z-10" style={{color:'var(--ww-text)'}}>
                 Go Premium
               </h4>
-              <p className="text-white/80 text-sm mb-6 relative z-10">
+              <p className="text-sm mb-6 relative z-10" style={{color:'var(--ww-text-2)'}}>
                 Get 17-day forecasts, ad-free experience, and high-def live
                 cams.
               </p>
-              <button className="bg-white text-blue-600 px-6 py-3 rounded-full font-black text-xs uppercase tracking-widest relative z-10 hover:shadow-xl transition-shadow">
+              <button className="px-6 py-3 rounded-full font-black text-xs uppercase tracking-widest relative z-10 hover:scale-105 transition-all" style={{background:'var(--ww-accent)',color:'var(--ww-accent-text)',boxShadow:'0 0 20px var(--ww-accent-bg)'}}>
                 Learn More
               </button>
             </div>

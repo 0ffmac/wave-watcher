@@ -94,10 +94,10 @@ const SwellDetails = ({
     <div className="container mx-auto px-6 py-8 space-y-4">
       {/* 1. Header Section */}
       <div className="mb-6">
-        <h2 className="text-xl font-black tracking-tight" style={{color:'#dde8ff'}}>
+        <h2 className="text-xl font-black tracking-tight" style={{color:'var(--ww-text)'}}>
           Current Surf Conditions
         </h2>
-        <p className="text-[10px] font-bold uppercase tracking-widest mt-1" style={{color:'#536280'}}>
+        <p className="text-[10px] font-bold uppercase tracking-widest mt-1" style={{color:'var(--ww-text-2)'}}>
           Local time:{" "}
           {new Date().toLocaleTimeString([], {
             hour: "2-digit",
@@ -108,10 +108,10 @@ const SwellDetails = ({
       </div>
 
       {/* 2. Rating Bar Card */}
-      <div className="rounded-xl p-4 flex items-center justify-between" style={{background:'rgba(255,255,255,0.035)',border:'0.5px solid rgba(255,255,255,0.07)'}}>
+      <div className="rounded-xl p-4 flex items-center justify-between" style={{background:'var(--ww-card)',border:'0.5px solid var(--ww-border)'}}>
         <div className="flex items-center gap-6">
           <div className="flex flex-col gap-1">
-            <span className="text-[9px] font-black uppercase tracking-widest" style={{color:'#536280'}}>
+            <span className="text-[9px] font-black uppercase tracking-widest" style={{color:'var(--ww-text-2)'}}>
               Condition Rating
             </span>
             <div className="flex items-center gap-4">
@@ -131,7 +131,7 @@ const SwellDetails = ({
         </div>
         <div className="flex items-center gap-2" style={{opacity:0.3}}>
           <div className="flex flex-col items-end">
-            <span className="text-[8px] font-black uppercase tracking-tighter" style={{color:'#536280'}}>
+            <span className="text-[8px] font-black uppercase tracking-tighter" style={{color:'var(--ww-text-2)'}}>
               WaveWatcher Engine • Cloudflare Powered
             </span>
           </div>
@@ -142,31 +142,31 @@ const SwellDetails = ({
       {/* 3. Detailed Info Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         {/* Surf Height */}
-        <div className="rounded-xl p-5 flex flex-col justify-between h-40" style={{background:'rgba(255,255,255,0.035)',border:'0.5px solid rgba(255,255,255,0.07)'}}>
+        <div className="rounded-xl p-5 flex flex-col justify-between h-40" style={{background:'var(--ww-card)',border:'0.5px solid var(--ww-border)'}}>
           <div>
-            <span className="text-[9px] font-black uppercase tracking-widest" style={{color:'#536280'}}>
+            <span className="text-[9px] font-black uppercase tracking-widest" style={{color:'var(--ww-text-2)'}}>
               Surf Height
             </span>
             <div className="mt-3">
-              <h3 className="text-3xl font-black tracking-tighter" style={{color:'#22d3ee'}}>
+              <h3 className="text-3xl font-black tracking-tighter" style={{color:'var(--ww-accent)'}}>
                 {surfRange}
               </h3>
-              <p className="text-xs font-bold mt-1" style={{color:'#536280'}}>
+              <p className="text-xs font-bold mt-1" style={{color:'var(--ww-text-2)'}}>
                 {getSurfDesc(surfRange)}
               </p>
             </div>
           </div>
           <div className="flex items-center gap-1" style={{opacity:0.2}}>
-            <span className="text-[8px] font-black uppercase tracking-widest" style={{color:'#536280'}}>
+            <span className="text-[8px] font-black uppercase tracking-widest" style={{color:'var(--ww-text-2)'}}>
               WaveWatcher Engine
             </span>
           </div>
         </div>
 
         {/* Swells List */}
-        <div className="rounded-xl p-5 flex flex-col justify-between lg:col-span-1 h-40" style={{background:'rgba(255,255,255,0.035)',border:'0.5px solid rgba(255,255,255,0.07)'}}>
+        <div className="rounded-xl p-5 flex flex-col justify-between lg:col-span-1 h-40" style={{background:'var(--ww-card)',border:'0.5px solid var(--ww-border)'}}>
           <div>
-            <span className="text-[9px] font-black uppercase tracking-widest" style={{color:'#536280'}}>
+            <span className="text-[9px] font-black uppercase tracking-widest" style={{color:'var(--ww-text-2)'}}>
               Swell
             </span>
             <div className="mt-3 space-y-2">
@@ -174,7 +174,7 @@ const SwellDetails = ({
                 swells.slice(0, 2).map((s, i) => (
                   <div
                     key={i}
-                    className="flex items-center gap-2" style={{color: i === 0 ? '#dde8ff' : '#536280'}}
+                    className="flex items-center gap-2" style={{color: i === 0 ? 'var(--ww-text)' : 'var(--ww-text-2)'}}
                   >
                     <span
                       className={`font-black tracking-tighter ${i === 0 ? "text-lg" : "text-xs"}`}
@@ -202,35 +202,35 @@ const SwellDetails = ({
             </div>
           </div>
           <div className="flex items-center gap-1" style={{opacity:0.2}}>
-            <span className="text-[8px] font-black uppercase tracking-widest" style={{color:'#536280'}}>
+            <span className="text-[8px] font-black uppercase tracking-widest" style={{color:'var(--ww-text-2)'}}>
               WaveWatcher Engine
             </span>
           </div>
         </div>
 
         {/* Wind Card + Satellite Dial */}
-        <div className="rounded-xl p-5 flex items-center justify-between lg:col-span-1 h-40 overflow-hidden" style={{background:'rgba(255,255,255,0.035)',border:'0.5px solid rgba(255,255,255,0.07)'}}>
+        <div className="rounded-xl p-5 flex items-center justify-between lg:col-span-1 h-40 overflow-hidden" style={{background:'var(--ww-card)',border:'0.5px solid var(--ww-border)'}}>
           <div className="flex flex-col justify-between h-full min-w-[120px]">
             <div>
-              <span className="text-[9px] font-black uppercase tracking-widest" style={{color:'#536280'}}>
+              <span className="text-[9px] font-black uppercase tracking-widest" style={{color:'var(--ww-text-2)'}}>
                 Wind
               </span>
               <div className="mt-3">
-                <h3 className="text-xl font-black tracking-tighter" style={{color:'#dde8ff'}}>
+                <h3 className="text-xl font-black tracking-tighter" style={{color:'var(--ww-text)'}}>
                   {displayWindSpeed.toFixed(0)}
-                  <span className="text-xs font-bold ml-0.5" style={{color:'#536280'}}>
+                  <span className="text-xs font-bold ml-0.5" style={{color:'var(--ww-text-2)'}}>
                     kph
                   </span>{" "}
                   {getCompass(displayWindDir)}
                 </h3>
-                <p className="text-[10px] font-bold mt-1" style={{color:'#536280'}}>
+                <p className="text-[10px] font-bold mt-1" style={{color:'var(--ww-text-2)'}}>
                   {displayWindGusts.toFixed(0)}kph gusts,{" "}
                   {wind.texture}
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-1" style={{opacity:0.2}}>
-              <span className="text-[8px] font-black uppercase tracking-widest" style={{color:'#536280'}}>
+              <span className="text-[8px] font-black uppercase tracking-widest" style={{color:'var(--ww-text-2)'}}>
                 Model Forecast
               </span>
             </div>
@@ -238,7 +238,7 @@ const SwellDetails = ({
 
           {/* Visual Wind Dial */}
           <div className="relative h-24 w-24 flex-shrink-0">
-            <div className="absolute inset-0 rounded-full overflow-hidden" style={{background:'rgba(13,31,56,0.95)',border:'0.5px solid rgba(255,255,255,0.12)',boxShadow:'0 0 20px rgba(34,211,238,0.08)'}}>
+            <div className="absolute inset-0 rounded-full overflow-hidden" style={{background:'var(--ww-dropdown-bg)',border:'0.5px solid var(--ww-border)',boxShadow:'0 0 20px var(--ww-accent-bg)'}}>
               {/* Compass Marks */}
               <div className="absolute inset-1 border border-white/5 rounded-full" />
               <div className="absolute top-1 left-1/2 -translate-x-1/2 text-[6px] font-black text-white/40">
@@ -273,15 +273,15 @@ const SwellDetails = ({
 
         {/* Tide Card */}
         {tide !== undefined && (
-          <div className="rounded-xl p-5 flex flex-col justify-between h-40" style={{background:'rgba(255,255,255,0.035)',border:'0.5px solid rgba(255,255,255,0.07)'}}>
+          <div className="rounded-xl p-5 flex flex-col justify-between h-40" style={{background:'var(--ww-card)',border:'0.5px solid var(--ww-border)'}}>
             <div className="relative h-full">
-              <span className="text-[9px] font-black uppercase tracking-widest" style={{color:'#536280'}}>
+              <span className="text-[9px] font-black uppercase tracking-widest" style={{color:'var(--ww-text-2)'}}>
                 Tide
               </span>
               <div className="mt-2 flex items-baseline gap-2">
-                <h3 className="text-3xl font-black tracking-tighter" style={{color:'#22d3ee'}}>
+                <h3 className="text-3xl font-black tracking-tighter" style={{color:'var(--ww-accent)'}}>
                   {tide.toFixed(1)}
-                  <span className="text-xs font-bold ml-1" style={{color:'#536280'}}>
+                  <span className="text-xs font-bold ml-1" style={{color:'var(--ww-text-2)'}}>
                     m
                   </span>
                 </h3>
@@ -353,40 +353,40 @@ const SwellDetails = ({
 
         {/* Temp Card */}
         {temperatures && (
-          <div className="rounded-xl p-5 flex flex-col justify-between h-40" style={{background:'rgba(255,255,255,0.035)',border:'0.5px solid rgba(255,255,255,0.07)'}}>
+          <div className="rounded-xl p-5 flex flex-col justify-between h-40" style={{background:'var(--ww-card)',border:'0.5px solid var(--ww-border)'}}>
             <div>
-              <span className="text-[9px] font-black uppercase tracking-widest" style={{color:'#536280'}}>
+              <span className="text-[9px] font-black uppercase tracking-widest" style={{color:'var(--ww-text-2)'}}>
                 Temperature
               </span>
               <div className="mt-3 flex items-center gap-6">
                 <div className="flex items-center gap-1.5">
                   <Droplets size={16} className="text-blue-400" />
-                  <span className="text-xl font-black" style={{color:'#dde8ff'}}>
+                  <span className="text-xl font-black" style={{color:'var(--ww-text)'}}>
                     {temperatures.water.toFixed(0)}°
                     <span className="text-[10px] ml-0.5">c</span>
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Sun size={16} className="text-amber-400" />
-                  <span className="text-xl font-black" style={{color:'#dde8ff'}}>
+                  <span className="text-xl font-black" style={{color:'var(--ww-text)'}}>
                     {temperatures.air.toFixed(0)}°
                     <span className="text-[10px] ml-0.5">c</span>
                   </span>
                 </div>
               </div>
-              <p className="text-xs font-bold mt-2" style={{color:'#536280'}}>Rashguard</p>
+              <p className="text-xs font-bold mt-2" style={{color:'var(--ww-text-2)'}}>Rashguard</p>
             </div>
 
-            <button className="flex items-center justify-between w-full rounded-lg px-3 py-1.5 transition-colors" style={{background:'rgba(255,255,255,0.04)',border:'0.5px solid rgba(255,255,255,0.07)'}}>
+            <button className="flex items-center justify-between w-full rounded-lg px-3 py-1.5 transition-colors" style={{background:'var(--ww-card)',border:'0.5px solid var(--ww-border)'}}>
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center text-[8px] text-white">
                   ☀
                 </div>
-                <span className="text-[9px] font-black uppercase" style={{color:'#536280'}}>
+                <span className="text-[9px] font-black uppercase" style={{color:'var(--ww-text-2)'}}>
                   Use SPF 50
                 </span>
               </div>
-              <ChevronRight size={10} style={{color:'#536280'}} />
+              <ChevronRight size={10} style={{color:'var(--ww-text-2)'}} />
             </button>
           </div>
         )}
