@@ -11,8 +11,8 @@ const SwellCompass = ({ degree, label, size = "large", isActive = false }) => {
 
   return (
     <div className={cn("flex flex-col items-center justify-center p-3 rounded-2xl transition-all duration-300", isActive ? "scale-105" : "")}
-      style={{background:'rgba(255,255,255,0.035)',border: isActive ? '0.5px solid rgba(34,211,238,0.4)' : '0.5px solid rgba(255,255,255,0.07)'}}>
-      <p className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{color:'#536280'}}>
+      style={{background:'var(--ww-card)',border: isActive ? '0.5px solid var(--ww-accent-border)' : '0.5px solid var(--ww-border)'}}>
+      <p className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{color:'var(--ww-text-2)'}}>
         {label}
       </p>
 
@@ -51,14 +51,14 @@ const SwellCompass = ({ degree, label, size = "large", isActive = false }) => {
           <g transform={`rotate(${degree}, 50, 50)`} className="transition-transform duration-700 ease-out">
             <path
               d="M50 8 L64 42 L50 36 L36 42 Z"
-              fill={isActive ? "#22d3ee" : "#536280"}
+              fill={isActive ? 'var(--ww-accent)' : 'var(--ww-text-2)'}
               className="drop-shadow-md"
             />
           </g>
         </svg>
       </div>
 
-      <p className={cn("font-black mt-2 tracking-tight", isSmall ? "text-xs" : "text-sm")} style={{color:'#dde8ff'}}>
+      <p className={cn("font-black mt-2 tracking-tight", isSmall ? "text-xs" : "text-sm")} style={{color:'var(--ww-text)'}}>
         {degree}°
       </p>
     </div>

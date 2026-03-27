@@ -40,8 +40,8 @@ const HazardPill = ({ level }) => {
 const SeasonTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-white border border-slate-200 rounded-xl p-3 shadow-lg text-xs">
-      <p className="font-black text-slate-700 mb-1">{label}</p>
+    <div className="rounded-xl p-3 text-xs" style={{background:'var(--ww-tooltip-bg)',border:'0.5px solid var(--ww-border)'}}>
+      <p className="font-black mb-1" style={{color:'var(--ww-text)'}}>{label}</p>
       {payload.map(p => (
         <p key={p.name} style={{ color: p.fill || p.stroke }}>
           {p.name.charAt(0).toUpperCase() + p.name.slice(1)}: <strong>{p.value}/10</strong>
@@ -59,18 +59,18 @@ const SpotInfo = ({ activeSpotId }) => {
   // Graceful fallback if spot has no info page yet
   if (!info) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-6 text-slate-400">
-        <Info size={48} strokeWidth={1.5} />
+      <div className="min-h-screen flex flex-col items-center justify-center gap-6" style={{background:'var(--ww-bg)',color:'var(--ww-text-2)'}}>
+        <Info size={48} strokeWidth={1.5} style={{color:'var(--ww-text-3)'}} />
         <div className="text-center">
-          <p className="text-xl font-black text-slate-700">No Info Available Yet</p>
-          <p className="text-sm mt-1">Detailed information for this spot is coming soon.</p>
+          <p className="text-xl font-black" style={{color:'var(--ww-text)'}}>No Info Available Yet</p>
+          <p className="text-sm mt-1" style={{color:'var(--ww-text-2)'}}>Detailed information for this spot is coming soon.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-24">
+    <div className="min-h-screen pb-24" style={{background:'var(--ww-bg)'}}>
 
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
       <div className="relative h-[60vh] min-h-[400px] overflow-hidden">
@@ -84,27 +84,27 @@ const SpotInfo = ({ activeSpotId }) => {
 
         {/* Hero text */}
         <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12">
-          <p className="text-white/70 text-sm font-bold uppercase tracking-widest mb-2">
+          <p className="text-sm font-bold uppercase tracking-widest mb-2" style={{color:'var(--ww-text-2)'}}>
             {info.region} · {info.country}
           </p>
-          <h1 className="text-white font-black text-5xl md:text-7xl tracking-tight leading-none mb-4">
+          <h1 className="font-black text-5xl md:text-7xl tracking-tight leading-none mb-4" style={{color:'var(--ww-text)'}}>
             {info.name}
           </h1>
           <DifficultyBadge level={info.difficulty.level} label={info.difficulty.label} />
-          <p className="text-white/80 text-base md:text-lg mt-4 max-w-2xl leading-relaxed">
+          <p className="text-base md:text-lg mt-4 max-w-2xl leading-relaxed" style={{color:'var(--ww-text-2)'}}>
             {info.tagline}
           </p>
         </div>
       </div>
 
       {/* ── Quick Stats Strip ────────────────────────────────────────────── */}
-      <div className="bg-white border-b border-slate-100 shadow-sm">
+      <div style={{borderBottom:'0.5px solid var(--ww-border)',background:'var(--ww-card-2)'}}>
         <div className="container mx-auto px-6">
           <div className="flex gap-0 overflow-x-auto">
             {info.stats.map((s, i) => (
-              <div key={i} className="flex-shrink-0 px-6 py-5 border-r border-slate-100 last:border-0 text-center min-w-[120px]">
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">{s.label}</p>
-                <p className="text-sm font-black text-slate-800">{s.value}</p>
+              <div key={i} className="flex-shrink-0 px-6 py-5 text-center min-w-[120px]" style={{borderRight:'0.5px solid var(--ww-border)'}}>
+                <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{color:'var(--ww-text-2)'}}>{s.label}</p>
+                <p className="text-sm font-black" style={{color:'var(--ww-text)'}}>{s.value}</p>
               </div>
             ))}
           </div>
@@ -115,80 +115,80 @@ const SpotInfo = ({ activeSpotId }) => {
       <div className="container mx-auto px-6 py-12 space-y-10">
 
         {/* Story */}
-        <div className="bg-white/70 backdrop-blur-xl border border-white/80 rounded-3xl p-8 md:p-12 shadow-xl">
-          <h2 className="font-black text-3xl text-slate-800 mb-6">{info.story.heading}</h2>
+        <div className="rounded-3xl p-8 md:p-12" style={{background:'var(--ww-card)',border:'0.5px solid var(--ww-border)'}}>
+          <h2 className="font-black text-3xl mb-6" style={{color:'var(--ww-text)'}}>{info.story.heading}</h2>
           <div className="space-y-4 max-w-3xl">
             {info.story.body.map((para, i) => (
-              <p key={i} className="text-slate-600 leading-relaxed text-base">{para}</p>
+              <p key={i} className="leading-relaxed text-base" style={{color:'var(--ww-text-2)'}}>{para}</p>
             ))}
           </div>
         </div>
 
         {/* Technical breakdown */}
         <div>
-          <h2 className="font-black text-2xl text-slate-800 mb-5 px-1">Technical Breakdown</h2>
+          <h2 className="font-black text-2xl mb-5 px-1" style={{color:'var(--ww-text)'}}>Technical Breakdown</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {info.technical.map((t, i) => (
-              <div key={i} className="bg-white/70 backdrop-blur-xl border border-white/80 rounded-3xl p-6 shadow-xl">
+              <div key={i} className="rounded-3xl p-6" style={{background:'var(--ww-card)',border:'0.5px solid var(--ww-border)'}}>
                 <div className="flex items-center gap-3 mb-3">
                   <span className="text-2xl">{t.icon}</span>
-                  <h3 className="font-black text-slate-800 text-base">{t.title}</h3>
+                  <h3 className="font-black text-base" style={{color:'var(--ww-text)'}}>{t.title}</h3>
                 </div>
-                <p className="text-slate-600 text-sm leading-relaxed">{t.content}</p>
+                <p className="text-sm leading-relaxed" style={{color:'var(--ww-text-2)'}}>{t.content}</p>
               </div>
             ))}
           </div>
         </div>
 
         {/* Hazards */}
-        <div className="bg-white/70 backdrop-blur-xl border border-white/80 rounded-3xl p-8 shadow-xl">
+        <div className="rounded-3xl p-8" style={{background:'var(--ww-card)',border:'0.5px solid var(--ww-border)'}}>
           <div className="flex items-center gap-3 mb-6">
             <AlertTriangle size={22} className="text-orange-500" />
-            <h2 className="font-black text-2xl text-slate-800">Hazards</h2>
+            <h2 className="font-black text-2xl" style={{color:'var(--ww-text)'}}>Hazards</h2>
           </div>
           <div className="space-y-4">
             {info.hazards.map((h, i) => (
-              <div key={i} className="flex items-start gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100">
+              <div key={i} className="flex items-start gap-4 p-4 rounded-2xl" style={{background:'var(--ww-hazard-bg)',border:'0.5px solid var(--ww-border-2)'}}>
                 <div className="flex-shrink-0 pt-0.5">
                   <HazardPill level={h.level} />
                 </div>
                 <div>
-                  <p className="font-black text-slate-800 text-sm mb-1">{h.title}</p>
-                  <p className="text-slate-500 text-sm leading-relaxed">{h.detail}</p>
+                  <p className="font-black text-sm mb-1" style={{color:'var(--ww-text)'}}>{h.title}</p>
+                  <p className="text-sm leading-relaxed" style={{color:'var(--ww-text-2)'}}>{h.detail}</p>
                 </div>
               </div>
             ))}
           </div>
-          <p className="text-xs text-slate-400 mt-4 italic">
+          <p className="text-xs mt-4 italic" style={{color:'var(--ww-text-3)'}}>
             {info.difficulty.note}
           </p>
         </div>
 
         {/* Best Season Chart */}
-        <div className="bg-white/70 backdrop-blur-xl border border-white/80 rounded-3xl p-8 shadow-xl">
+        <div className="rounded-3xl p-8" style={{background:'var(--ww-card)',border:'0.5px solid var(--ww-border)'}}>
           <div className="flex items-center gap-3 mb-2">
             <Calendar size={22} className="text-blue-500" />
-            <h2 className="font-black text-2xl text-slate-800">Best Time of Year</h2>
+            <h2 className="font-black text-2xl" style={{color:'var(--ww-text)'}}>Best Time of Year</h2>
           </div>
-          <p className="text-slate-400 text-sm mb-6 ml-9">{info.seasonNote}</p>
+          <p className="text-sm mb-6 ml-9" style={{color:'var(--ww-text-3)'}}>{info.seasonNote}</p>
           <div style={{ height: 220 }}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={info.seasonChart} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--ww-chart-grid)" />
                 <XAxis
                   dataKey="month"
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 700 }}
+                  tick={{ fill: 'var(--ww-text-2)', fontSize: 11, fontWeight: 700 }}
                 />
                 <YAxis
                   domain={[0, 10]}
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 600 }}
+                  tick={{ fill: 'var(--ww-text-2)', fontSize: 10, fontWeight: 600 }}
                   tickFormatter={v => `${v}`}
                 />
-                <Tooltip content={<SeasonTooltip />} cursor={{ fill: '#f8fafc' }} />
+                <Tooltip content={<SeasonTooltip />} cursor={{ fill: 'var(--ww-card-2)' }} />
                 <Bar dataKey="overall" radius={[6, 6, 0, 0]} name="overall">
                   {info.seasonChart.map((entry, index) => (
                     <Cell
@@ -215,40 +215,40 @@ const SpotInfo = ({ activeSpotId }) => {
             ].map(item => (
               <div key={item.label} className="flex items-center gap-1.5">
                 <div className={`w-3 h-3 rounded-sm ${item.colour}`} />
-                <span className="text-xs font-semibold text-slate-500">{item.label}</span>
+                <span className="text-xs font-semibold" style={{color:'var(--ww-text-2)'}}>{item.label}</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* Access Guide */}
-        <div className="bg-white/70 backdrop-blur-xl border border-white/80 rounded-3xl p-8 shadow-xl">
+        <div className="rounded-3xl p-8" style={{background:'var(--ww-card)',border:'0.5px solid var(--ww-border)'}}>
           <div className="flex items-center gap-3 mb-4">
             <Navigation size={22} className="text-green-500" />
-            <h2 className="font-black text-2xl text-slate-800">How to Get There</h2>
+            <h2 className="font-black text-2xl" style={{color:'var(--ww-text)'}}>How to Get There</h2>
           </div>
-          <p className="text-slate-600 text-sm leading-relaxed mb-6 max-w-2xl">
+          <p className="text-sm leading-relaxed mb-6 max-w-2xl" style={{color:'var(--ww-text-2)'}}>
             {info.access.overview}
           </p>
           <ol className="space-y-3">
             {info.access.steps.map((step, i) => (
               <li key={i} className="flex items-start gap-4">
-                <span className="flex-shrink-0 w-7 h-7 rounded-full bg-blue-100 text-blue-700 text-xs font-black flex items-center justify-center">
+                <span className="flex-shrink-0 w-7 h-7 rounded-full text-xs font-black flex items-center justify-center" style={{background:'var(--ww-accent-bg)',color:'var(--ww-accent)'}}>
                   {i + 1}
                 </span>
-                <p className="text-slate-600 text-sm leading-relaxed pt-0.5">{step}</p>
+                <p className="text-sm leading-relaxed pt-0.5" style={{color:'var(--ww-text-2)'}}>{step}</p>
               </li>
             ))}
           </ol>
-          <div className="mt-6 p-4 bg-blue-50 border border-blue-100 rounded-2xl">
-            <p className="text-xs font-black text-blue-700 uppercase tracking-widest mb-1">Local Tip</p>
-            <p className="text-sm text-blue-600">{info.access.tip}</p>
+          <div className="mt-6 p-4 rounded-2xl" style={{background:'var(--ww-accent-bg-2)',border:'0.5px solid var(--ww-accent-border-2)'}}>
+            <p className="text-xs font-black uppercase tracking-widest mb-1" style={{color:'var(--ww-accent)'}}>Local Tip</p>
+            <p className="text-sm" style={{color:'var(--ww-text-2)'}}>{info.access.tip}</p>
           </div>
         </div>
 
         {/* Photo Gallery */}
         <div>
-          <h2 className="font-black text-2xl text-slate-800 mb-5 px-1">Gallery</h2>
+          <h2 className="font-black text-2xl mb-5 px-1" style={{color:'var(--ww-text)'}}>Gallery</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {info.gallery.map((photo, i) => (
               <div
