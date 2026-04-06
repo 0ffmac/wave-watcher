@@ -275,11 +275,11 @@ async def fetch_stormglass_data(spot, api_key):
 class Default(WorkerPoint := WorkerEntrypoint):
     async def fetch(self, request):
         cors_headers = {
+            "Content-Type": "application/json",
             "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Methods": "GET, OPTIONS",
             "Access-Control-Allow-Headers": "Content-Type",
-            "Content-Type": "application/json",
-            "Cache-Control": "public, max-age=600",
+            "Cache-Control": "no-store, no-cache, must-revalidate",
         }
         if request.method == "OPTIONS":
             return Response("", headers=cors_headers)
@@ -721,6 +721,7 @@ class Default(WorkerPoint := WorkerEntrypoint):
                 c_rain = safe_val(mh["rain"], idx)
                 c_cloud_cover = safe_val(mh["cloud_cover"], idx)
             else:
+                no_cache = Object.fromEntries(to_js({"cache": "no-store"}))
                 m_res = await fetch(
                     f"https://marine-api.open-meteo.com/v1/marine?latitude={spot['lat']}&longitude={spot['lon']}&hourly=swell_wave_height,swell_wave_period,swell_wave_direction,secondary_swell_wave_height,secondary_swell_wave_period,secondary_swell_wave_direction,wave_height,sea_surface_temperature,sea_level_height_msl&timezone={spot['timezone']}&forecast_days=8",
                     no_cache,
@@ -827,7 +828,7 @@ class Default(WorkerPoint := WorkerEntrypoint):
 
             final_json = json.dumps(payload)
             await self.env.SURF_CACHE.put(
-                cache_key_with_source, final_json, expiration_ttl=1800
+                cache_key_with_source, final_json, expiration_ttl=3600
             )
             return Response(final_json, headers=cors_headers)
 
