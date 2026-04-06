@@ -18,8 +18,8 @@ export const SPOT_CONFIG = {
             lon: 103.9919,
             location: "South Sumatra, Indonesia",
             region: "indonesia_sumatra",
-            swellWindow: [170, 240], // Widen for S swells
-            optimalSwellDir: 205,
+            swellWindow: [190, 230], // Widen for S swells
+            optimalSwellDir: 209,
             facingDir: 205,
             breakType: "reef",
             spotScaleFactor: 1.05,
@@ -36,9 +36,10 @@ export const SPOT_CONFIG = {
             optimalSwellDir: 215,
             facingDir: 215,
             breakType: "heavy_beach",
-            spotScaleFactor: 1.1,
+            spotScaleFactor: 0.7,
             offshore_wind: [40, 120],
             onshore_wind: [180, 30],
+            swellPlateau: 35, // Beach break — works across wider angles if this key is not informed, default value is 20
           },
           krui_left: {
             name: "Krui Left",

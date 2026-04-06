@@ -5,7 +5,7 @@
     "lon": 103.9919,
     "timezone": "Asia/Jakarta",
     "region": "indonesia_sumatra",
-    "ideal_swell": [190, 220],
+    "ideal_swell": [198, 220],
     "offshore_wind": [80, 160],
     "onshore_wind": [200, 20]
   },

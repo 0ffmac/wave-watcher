@@ -155,15 +155,11 @@ const ForecastTable = ({
 
     // Energy: centralized calculation
     const eMult = Math.max(energyMultiplier, getEnergyMultiplier(spotMeta?.region));
-    // Energy uses finalScaleFactor-corrected heights (consistent with surf height display)
-    // and the period-corrected periods (consistent with display column).
-    // Still ~20-25% below Surfline because Open-Meteo only provides 2 swell partitions
-    // (Surfline tracks 3+). See V11 notes on switching to Stormglass for full accuracy.
-    const energyValue =
-      calculateEnergy(pSwellHeight * finalScaleFactor, pSwellPeriod, eMult) +
-      (sSwellPeriodRaw >= MIN_SURF_PERIOD
-        ? calculateEnergy(sSwellHeight * finalScaleFactor, sSwellPeriod, eMult)
-        : 0);
+    // Energy uses the calculated surf face height (surfMax) — not raw Hs.
+    // surfMax already incorporates directionalFactor, windFactor, breakFactor
+    // and chopDamping, so energy stays consistent with the Surf (m) column.
+    // A 0.6m surf face cannot show 650kJ — it should show ~150–200kJ.
+    const energyValue = calculateEnergy(surfMax, pSwellPeriod, eMult);
 
 
     dayEntry.allHours.push({

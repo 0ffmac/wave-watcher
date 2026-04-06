@@ -65,8 +65,10 @@ export const calculateSurfHeight = (
     const diff = Math.abs(sDir - optDir);
     const finalDiff = diff > 180 ? 360 - diff : diff;
 
-    // Plateau logic: Spots wrap swell.
-    if (finalDiff <= 45) {
+    // Plateau logic: only award full marks within ±swellPlateau° of optimal.
+    // Default 20° for precise reef breaks. Beach breaks can override higher.
+    const swellPlateau = spotMeta?.swellPlateau ?? 20;
+    if (finalDiff <= swellPlateau) {
       directionalFactor = 1.0;
     } else {
       const halfWindow = (maxWin - minWin) / 2;
@@ -226,7 +228,7 @@ export const calculateConditionRating = (
     if (finalRating === 'EPIC' || finalRating === 'GOOD') {
       finalRating = 'FAIR';
     }
-  } else if (surfHeightMax < 1.4) {
+  } else if (surfHeightMax < 1.6) {
     if (finalRating === 'EPIC') {
       finalRating = 'GOOD';
     }
