@@ -22,7 +22,7 @@ export const SPOT_CONFIG = {
             optimalSwellDir: 209,
             facingDir: 205,
             breakType: "reef",
-            spotScaleFactor: 1.05,
+            spotScaleFactor: 1,
             offshore_wind: [80, 160],
             onshore_wind: [200, 20],
           },
@@ -47,11 +47,12 @@ export const SPOT_CONFIG = {
             lon: 103.929,
             location: "South Sumatra, Indonesia",
             region: "indonesia_sumatra",
-            swellWindow: [170, 220],
-            optimalSwellDir: 195,
-            facingDir: 195,
+            swellWindow: [170, 280], // S/SSW barely wraps in; W/WSW is the magic angle
+            optimalSwellDir: 255,    // WSW — direct path into the bay, no shadowing
+            facingDir: 195,          // Physical beach face unchanged
             breakType: "point",
-            spotScaleFactor: 1.0,
+            spotScaleFactor: 0.40,   // Bay shadowing cuts ~60% of open-ocean height
+            swellPlateau: 15,        // Very directional — W/WSW only; S gets heavy penalty
             offshore_wind: [50, 130],
             onshore_wind: [190, 40],
           },
@@ -75,11 +76,12 @@ export const SPOT_CONFIG = {
             lon: 103.929829,
             location: "South Sumatra, Indonesia",
             region: "indonesia_sumatra",
-            swellWindow: [180, 250],
-            optimalSwellDir: 220,
-            facingDir: 220,
+            swellWindow: [175, 275], // Slightly wider than Krui Left — reef faces more W
+            optimalSwellDir: 245,    // WSW — direct bay entry, less wrapping needed
+            facingDir: 220,          // Physical reef face unchanged
             breakType: "reef",
-            spotScaleFactor: 1.0,
+            spotScaleFactor: 0.45,   // Slightly less shadow than Krui Left (reef position)
+            swellPlateau: 15,        // Also very directional
             offshore_wind: [60, 150],
             onshore_wind: [240, 330],
           },
