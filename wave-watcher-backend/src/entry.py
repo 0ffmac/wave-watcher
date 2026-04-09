@@ -709,7 +709,28 @@ class Default(WorkerPoint := WorkerEntrypoint):
             if req_url.searchParams.get("bypass_cache") != "true":
                 cached = await self.env.SURF_CACHE.get(cache_key_with_source)
                 if cached:
-                    return Response(cached, headers=cors_headers)
+                    try:
+                        cached_data = json.loads(cached)
+                        cached_times = cached_data.get("hourly", {}).get("times", [])
+                        if cached_times:
+                            # Compare the last forecast date against today (UTC).
+                            # Fresh data has 8 days of forecast, so its last date
+                            # is always ~7 days ahead of the fetch date. If fewer
+                            # than 3 days remain, the data is stale — fetch fresh.
+                            # Using date-only comparison avoids timezone issues:
+                            # timestamps are local time (naive), utcnow is UTC,
+                            # but a 3-day threshold absorbs any ±14h tz offset.
+                            last_date_str = cached_times[-1][:10]  # "YYYY-MM-DD"
+                            last_date = datetime.strptime(last_date_str, "%Y-%m-%d").date()
+                            today_utc = datetime.utcnow().date()
+                            days_remaining = (last_date - today_utc).days
+                            if days_remaining >= 3:
+                                # Plenty of future forecast data — serve from KV
+                                return Response(cached, headers=cors_headers)
+                            # else: fewer than 3 days remaining → stale, fall through
+                    except Exception:
+                        # If parsing fails for any reason, fall through to fresh fetch
+                        pass
 
             # 3. Data Fetching Logic
             if source == "stormglass":
@@ -827,8 +848,9 @@ class Default(WorkerPoint := WorkerEntrypoint):
             }
 
             final_json = json.dumps(payload)
+            put_options = Object.fromEntries(to_js({"expirationTtl": 3600}))
             await self.env.SURF_CACHE.put(
-                cache_key_with_source, final_json, expiration_ttl=3600
+                cache_key_with_source, final_json, put_options
             )
             return Response(final_json, headers=cors_headers)
 
